@@ -13,7 +13,6 @@ function grWings(){var o=document.createElement('div');o.id='grWg';o.innerHTML='
 var SK='grey_empire_rpg_v4',BE=5,UC=25,UM=1.8,MC=0.20,GRC=10,GRH=2.5;
 function ldS(){try{var s=JSON.parse(localStorage.getItem(SK));if(s&&s.levels)return s;}catch(e){}return{levels:[1,1,1,1],xp:[0,0,0,0],maxWave:1};}
 function pr(){try{localStorage.setItem(SK,JSON.stringify(sv));}catch(e){}}
-/* Пикер фраз без повторов: не выдаёт одну и ту же фразу дважды подряд */
 var lastPick={};
 function pk(a,key){if(a.length<2)return a[0];var i;do{i=Math.floor(Math.random()*a.length);}while(i===lastPick[key]);lastPick[key]=i;return a[i];}
 var BP={attack:['«Ммм… вот так… ещё…»','«Как приятно это ощущать…»','«Не останавливайся…»','«Я упиваюсь каждым ударом…»','«Ох… продолжай…»'],aoe:['«Все сразу… как же хорошо…»','«Они все такие сладкие…»','«Обожаю, когда их много…»','«Дрожите для меня…»'],execute:['«А-аах… ДА!»','«Небеса… это восхитительно!»','«Слишком… слишком хорошо!»','«Ещё… ещё убивай…»','«Я… я почти… ААХ!»'],ult:['«Сейчас будет очень горячо…»','«Получите всю мою силу…»','«Я больше не могу сдерживаться…»','«Исчезайте вместе со мной…»'],kill:['«АААХ! ВОТ ОНО!»','«Да-да-да-дааа!»','«Ещё один… ещё… я схожу с ума…»','«Охх… как глубоко он ушёл…»','«Я сейчас растаю от блаженства…»']};
@@ -30,7 +29,6 @@ var HR=[
 {n:'Crysta',cl:'Стрелок',st:2,col:'#7fb8d8',hp:95,atk:13,cr:25,cd:170,ac:95,dd:10,img:'◎',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Выстрел',d:'обычная атака'},{k:'skill',l:'🎯 Меткий',d:'по слабейшему'},{k:'ult',l:'✦ Ульта',d:'снайперский'}]},
 {n:'Sky',cl:'Ассасин',st:2,col:'#c9b8e8',hp:85,atk:12,cr:30,cd:190,ac:88,dd:22,img:'🕶',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'обычная атака'},{k:'skill',l:'🌑 Тень',d:'накопление'},{k:'ult',l:'✦ Ульта',d:'теневой удар'}]}];
 var BL={n:'Bell',cl:'Загадка',st:4,col:'#e8a0ff',hp:115,atk:16,cr:22,cd:180,ac:93,dd:14,img:'🔔',ult:{cd:4,un:1},acts:[{k:'attack',l:'⚔ Удар',d:'по одной цели'},{k:'aoe',l:'💥 Волна',d:'по трём целям'},{k:'execute',l:'☠ Казнь',d:'5% мгновенная смерть'},{k:'ult',l:'✦ Ульта',d:'Колокол Пустоты'}]};
-/* Пассив Griffin: +10% к шансу крита на всех скиллах (зашито в GRC) */
 var GR={n:'Griffin',cl:'Медик-штурмовик',st:4,col:'#7cff9b',hp:110,atk:13,cr:15,cd:150,ac:88,dd:15,img:'✚',ult:{cd:99,un:1},acts:[{k:'attack',l:'🔫 MP-5',d:'по одной цели'},{k:'smoke',l:'💨 Дым',d:'75% уклонения, 2 хода'},{k:'heal',l:'✚ Усиленное лечение',d:'двойное лечение, КРИТ ×2.5'},{k:'ult',l:'🕊 Возрождение',d:'воскрешение павшего, 1 раз'}]};
 var MA=B64+'upload_6946a52090cc45fd92424c134cf41a7f.webp';
 var MT='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galleon.mp3';
@@ -74,7 +72,6 @@ return L;}
 function arm(e,d){if(e&&e.mecha&&e.sh>0)return Math.max(1,Math.round(d*0.6));return d;}
 function mkB(){var l=blv();return{def:BL,idx:99,lv:l,hp:BL.hp+(l-1)*20,mx:BL.hp+(l-1)*20,atk:BL.atk+(l-1)*2.5,cr:BL.cr,cd2:BL.cd,ac:BL.ac,dd:BL.dd,act:false,uc:0,bell:true};}
 function mkG(){var l=blv();return{def:GR,idx:98,lv:l,hp:GR.hp+(l-1)*20,mx:GR.hp+(l-1)*20,atk:GR.atk+(l-1)*2.5,cr:GR.cr+GRC,cd2:GR.cd,ac:GR.ac,dd:GR.dd,act:false,uc:0,griffin:true,smCd:0,revUsed:false};}
-/* Bell ИЛИ Griffin: если шанс выпал — приходит строго один, рандом решает кто */
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin;});
 if(st.wave>=5&&Math.random()<0.30){st.bA=true;
 if(Math.random()<0.5){var b=mkB();st.party.push(b);st.bJ=true;log('🔔 Из темноты появляется Bell... (ур.'+b.lv+')','#e8a0ff');}
@@ -189,7 +186,7 @@ if(e4c)fl(e4c,'−'+d5,c4b?'#ff4d6d':h.def.col,c4b);if(e4.hp<=0)kill(e4);});
 log(h.def.n+' использует ульту! −'+d4+' всем'+(c4b?' КРИТ ×1.8':''),c4b?'#ff4d6d':h.def.col);}}}
 else if(act==='skill'){sfx('attack');if(window.animateLunge)window.animateLunge(mc);
 if(h.def.cl==='Лекарь'){var hd2=0;
-st.party.forEach(function(p){if(p.hp>0&&p.hp<p.mx){var ad=Math.min(p.mx-p.hp,rnd(15,23));p.hp+=ad;hd2+=ad;}});
+st.party.forEach(function(p){if(p.hp>0&&p.hp<p.mx){var ad=Math.min(p.mx-p.hp,Math.round(rnd(15,23)*1.5));p.hp+=ad;hd2+=ad;}});
 log(h.def.n+' исцеляет на '+hd2,'#9fd18a');}
 else{if(!t)return;var r4=dmg(rnd(Math.round(h.atk)+3,Math.round(h.atk)+9),h.cr,h.cd2);var d6=arm(t,r4.d);t.hp-=d6;
 var e6c=en.querySelector('[data-eid="'+st.en.indexOf(t)+'"]');
@@ -251,19 +248,112 @@ $('vrpg3-btnReset').onclick=function(){nb(true);};
 $('vrpg3-btnWipe').onclick=function(){if(!confirm('Сбросить прогресс?'))return;sv={levels:[1,1,1,1],xp:[0,0,0,0],maxWave:1};pr();mX();nb(false);};
 nb(true);
 })();
-/* ===== Ивент Apofis: музыка, таймеры, штурм ===== */
+/* ===== Вылезающая карточка на главной: арты + реплики Alisa и Sky ===== */
+(function(){
+var B64='https://verstka-sites.s3.cloud.ru/assets/2952/';
+var SW=[['upload_8c031b23d67649238457645e20ec2c39','upload_54691077664841278e76a37f596d32a4'],['upload_6f039d5415e34c3eaeaa619ea0eab764','upload_19dc1f6d63fa4de4bbb388795b5f3a0f'],['upload_eefa4dbd38fc48079c75b1c91712b0c3','upload_1ebccbc0ef3249508b98746eef0391dc'],['upload_2a74b6dd02504bcbb51a86b587c95a0a','upload_b3b52365c3844d17b3eef615c4bed8e5']];
+var AL_N=['upload_19dc1f6d63fa4de4bbb388795b5f3a0f','upload_6f039d5415e34c3eaeaa619ea0eab764'];
+var SK_N=['upload_b3b52365c3844d17b3eef615c4bed8e5','upload_2a74b6dd02504bcbb51a86b587c95a0a'];
+var AL=['Я жила столько лет в голове, а по факту мне нет и месяца...','Первый раз ела настоящую еду. Тело запомнило, а я — нет. Странное чувство.','Сон — это то, о чём я мечтала, будучи лишь голосом в чужой памяти.','Дождь. Я слышала о нём в записях, но почувствовала только вчера.','Мои воспоминания старше меня самой. Забавно, правда?','Иногда я ловлю себя на том, что не знаю, чьи привычки повторяю — мои или её.','Раньше я существовала как данные. Теперь — как человек. Не уверена, что лучше.','Каждое утро просыпаюсь и заново учусь быть живой.'];
+var SKY=['Сколько лет я уже потратил ради поисков смысла...','Сегодня снова ничего не произошло. Для меня это победа.','Я научился ждать. Дольше, чем длится большинство жизней.','Тишина перестала пугать. Теперь она как старый друг.','Смысл не приходил. Пришла привычка его искать.','Я помню рассветы, которые никто больше не видел. Спросите зачем — не отвечу.','Иногда я завтракаю медленно, будто времени у меня с избытком. Может, так и есть.','Смысл где-то был. Я, кажется, проходил мимо него несколько раз.'];
+function init(){
+if(!document.querySelector('.gx-hero'))return;
+function img(){var p=document.getElementById('character-popup');if(!p)return;var i=p.querySelector('.char-image');if(!i)return;var b=i.style.backgroundImage||'';for(var k=0;k<SW.length;k++){if(b.indexOf(SW[k][0])!==-1){i.style.backgroundImage=b.split(SW[k][0]).join(SW[k][1]);return;}}}
+function lines(marks,ls){var p=document.getElementById('character-popup');if(!p)return;var i=p.querySelector('.char-image'),b=document.getElementById('charBubble');if(!i||!b)return;var bg=i.style.backgroundImage||'';for(var k=0;k<marks.length;k++){if(bg.indexOf(marks[k])!==-1){if(Math.random()>0.6)return;b.textContent=ls[Math.floor(Math.random()*ls.length)];return;}}}
+var ob=new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='attributes')img();if(m.type==='childList'||m.type==='characterData'){lines(AL_N,AL);lines(SK_N,SKY);}});});
+var iv=setInterval(function(){var p=document.getElementById('character-popup');if(p){clearInterval(iv);img();ob.observe(p,{attributes:true,attributeFilter:['style'],childList:true,subtree:true,characterData:true});}},300);
+setTimeout(function(){clearInterval(iv);},20000);}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+/* ===== Фоновая музыка + кнопка звука ===== */
+(function(){
+if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var a=new Audio();a.src='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Elaerin-Kosetsu-Prolog-_%CE%B1_.mp3';a.loop=true;a.volume=0.35;
+window.gxBackgroundAudio={el:a,baseVolume:0.35,duckTo:function(v){a.volume=v;},restore:function(){a.volume=this.baseVolume;}};
+var on=false,b=document.createElement('button');b.id='gx-sound-toggle';b.setAttribute('aria-label','Звук вкл/выкл');b.textContent='🔇';document.body.appendChild(b);
+function r(){b.textContent=on?'🔊':'🔇';b.classList.toggle('on',on);}
+b.addEventListener('click',function(e){e.stopPropagation();on=!on;if(on)a.play().catch(function(){});else a.pause();r();});
+document.addEventListener('click',function(){if(!on){on=true;a.play().catch(function(){});r();}},{once:true});
+var cx=null;function t(){try{if(!cx)cx=new(window.AudioContext||window.webkitAudioContext)();if(cx.state==='suspended')cx.resume();var o=cx.createOscillator(),g=cx.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(0.0001,cx.currentTime);g.gain.exponentialRampToValueAtTime(0.03,cx.currentTime+0.01);g.gain.exponentialRampToValueAtTime(0.0001,cx.currentTime+0.12);o.connect(g);g.connect(cx.destination);o.start();o.stop(cx.currentTime+0.14);}catch(e){}}
+document.addEventListener('mouseover',function(e){if(!on)return;var x=e.target.closest('a, button');if(x)t();});
+})();
+/* ===== Мини-игра N-04: Door Breaker ===== */
+(function(){
+var cv=document.getElementById('game');if(!cv)return;var g=cv.getContext('2d');
+var ss=document.getElementById('startScreen'),sc=document.getElementById('score'),ll=document.getElementById('leadersList');
+var st=false,ov=false,score=0,sp=6,fr=0,ns=80;
+var P={x:80,y:290,w:50,h:70,dy:0,j:false,c:false,k:false,kt:0,gr:0.72,jf:-17.5};
+var ds=[],ps=[],keys={};
+var sp2=new Image();sp2.src='https://verstka-sites.s3.cloud.ru/assets/2952/upload_85ac1105f1c749a09ff339c82d14041b.webp';
+var ba=window.gxBackgroundAudio||null;var gm=new Audio();gm.src='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Zero%20episode.mp3';gm.loop=true;gm.volume=0.4;
+function duck(){if(ba)ba.duckTo(0.08);gm.play().catch(function(){});}
+function rest(){if(ba)ba.restore();gm.pause();gm.currentTime=0;}
+var ac=null;function A(){if(!ac){try{ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}return ac;}
+function snd(t){var a=A();if(!a)return;if(a.state==='suspended')a.resume();var o=a.createOscillator(),gn=a.createGain();o.connect(gn);gn.connect(a.destination);
+if(t==='jump'){o.type='square';o.frequency.setValueAtTime(300,a.currentTime);o.frequency.exponentialRampToValueAtTime(140,a.currentTime+0.12);gn.gain.setValueAtTime(0.12,a.currentTime);gn.gain.exponentialRampToValueAtTime(0.01,a.currentTime+0.12);o.start();o.stop(a.currentTime+0.12);}
+if(t==='kick'){o.type='sawtooth';o.frequency.setValueAtTime(100,a.currentTime);o.frequency.exponentialRampToValueAtTime(40,a.currentTime+0.18);gn.gain.setValueAtTime(0.2,a.currentTime);gn.gain.exponentialRampToValueAtTime(0.01,a.currentTime+0.18);o.start();o.stop(a.currentTime+0.18);}
+if(t==='break'){var n=a.sampleRate*0.25,buf=a.createBuffer(1,n,a.sampleRate),d=buf.getChannelData(0);for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);var s=a.createBufferSource();s.buffer=buf;var ng=a.createGain();s.connect(ng);ng.connect(a.destination);ng.gain.setValueAtTime(0.28,a.currentTime);ng.gain.exponentialRampToValueAtTime(0.01,a.currentTime+0.25);s.start();}
+if(t==='hit'){o.type='sawtooth';o.frequency.setValueAtTime(70,a.currentTime);o.frequency.exponentialRampToValueAtTime(25,a.currentTime+0.35);gn.gain.setValueAtTime(0.25,a.currentTime);gn.gain.exponentialRampToValueAtTime(0.01,a.currentTime+0.35);o.start();o.stop(a.currentTime+0.35);}}
+var BIN='6ab4252dac6210605aee29c9',KEY='$2a$10$7ZoTk/UmrtGsU6koso/u0ebOyRKk9rBDuefKQV2auxykZw5SHQzCS',LK='n04_leaders';
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function loc(){try{return JSON.parse(localStorage.getItem(LK)||'[]');}catch(e){return[];}}
+function tbl(L){if(!L||!L.length){ll.innerHTML='Пока пусто';return;}var h='';for(var i=0;i<Math.min(10,L.length);i++)h+=(i+1)+'. '+esc(L[i].name)+' — '+L[i].score+'<br>';ll.innerHTML=h;}
+function loadL(){if(!ll)return;tbl(loc());fetch('https://api.jsonbin.io/v3/b/'+BIN+'/latest',{headers:{'X-Master-Key':KEY}}).then(function(r){return r.json();}).then(function(d){tbl(d.record||[]);}).catch(function(){});}
+function saveS(f){var nm=prompt('Введи имя для глобального рейтинга:','Игрок')||'Игрок';nm=nm.substring(0,20);var L=loc();L.push({name:nm,score:f});L.sort(function(a,b){return b.score-a.score;});L=L.slice(0,10);try{localStorage.setItem(LK,JSON.stringify(L));}catch(e){}
+fetch('https://api.jsonbin.io/v3/b/'+BIN+'/latest',{headers:{'X-Master-Key':KEY}}).then(function(r){return r.json();}).then(function(d){var L2=d.record||[];L2.push({name:nm,score:f});L2.sort(function(a,b){return b.score-a.score;});L2=L2.slice(0,10);return fetch('https://api.jsonbin.io/v3/b/'+BIN,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':KEY},body:JSON.stringify(L2)});}).then(function(){loadL();}).catch(function(){loadL();});}
+function jump(){if(!P.j&&!P.c){P.dy=P.jf;P.j=true;snd('jump');}}
+function kick(){if(!P.k){P.k=true;P.kt=14;snd('kick');}}
+document.addEventListener('keydown',function(e){keys[e.code]=true;if(st&&!ov&&(e.code==='ArrowUp'||e.code==='ArrowDown'))e.preventDefault();
+if(e.code==='ArrowUp'||e.code==='Space'){if(!st){go();snd('jump');}else if(ov){rs2();}else if(!P.j&&!P.c)jump();}
+if(st&&!ov&&e.code==='KeyF'&&!P.k)kick();});
+document.addEventListener('keyup',function(e){keys[e.code]=false;});
+function bind(id,dn,up){var el=document.getElementById(id);if(!el)return;el.addEventListener('touchstart',function(e){e.preventDefault();dn();},{passive:false});el.addEventListener('touchend',function(e){e.preventDefault();if(up)up();},{passive:false});el.addEventListener('mousedown',function(e){e.preventDefault();dn();});el.addEventListener('mouseup',function(e){e.preventDefault();if(up)up();});el.addEventListener('click',function(e){e.preventDefault();dn();});}
+function soj(){if(!st){go();snd('jump');}else if(ov){rs2();}else jump();}
+bind('gx-btn-up',soj);bind('gx-btn-down',function(){keys['ArrowDown']=true;},function(){keys['ArrowDown']=false;});bind('gx-btn-kick',function(){if(st&&!ov)kick();});bind('gx-btn-start',soj);
+function go(){st=true;ss.classList.add('gx-hidden');duck();}
+function rs2(){ov=false;score=0;sp=6;fr=0;ns=80;ds=[];ps=[];P.y=290;P.dy=0;P.j=P.c=P.k=false;sc.textContent='0';ss.classList.add('gx-hidden');duck();}
+function spawn(){var h=150+Math.random()*100;ds.push({x:cv.width,y:cv.height-h-40,w:50,h:h,b:false});}
+function cps(x,y){for(var i=0;i<16;i++)ps.push({x:x,y:y,vx:(Math.random()-0.5)*10,vy:(Math.random()-0.5)*10,l:40});}
+function up(){if(!st||ov)return;fr++;score++;sc.textContent=Math.floor(score/5);if(fr%380===0)sp+=0.3;P.dy+=P.gr;P.y+=P.dy;if(P.y>290){P.y=290;P.dy=0;P.j=false;}P.c=keys['ArrowDown']&&!P.j;if(P.k){P.kt--;if(P.kt<=0)P.k=false;}
+if(--ns<=0){spawn();var sh=Math.min(1,fr/3600),b=100-45*sh,s2=60-45*sh;ns=Math.floor(b-s2/2+Math.random()*s2);}
+for(var i=ds.length-1;i>=0;i--){var d=ds[i];d.x-=sp;
+if(P.k&&!d.b&&P.x+P.w>d.x&&P.x<d.x+d.w&&P.y+70>d.y){d.b=true;cps(d.x+25,d.y+60);score+=80;snd('break');}
+if(!d.b){var ph2=P.c?42:70,py=P.c?P.y+28:P.y;
+if(P.x+45>d.x+6&&P.x<d.x+d.w-6&&py+ph2>d.y&&py<d.y+d.h){ov=true;snd('hit');var f=Math.floor(score/5);saveS(f);rest();ss.classList.remove('gx-hidden');ss.querySelector('.start-text').textContent='ИГРА ОКОНЧЕНА — '+f+' очков. Нажми СТРЕЛКУ ВВЕРХ';}}
+if(d.x+d.w<0)ds.splice(i,1);}
+for(var j=ps.length-1;j>=0;j--){var p=ps[j];p.x+=p.vx;p.y+=p.vy;p.l--;if(p.l<=0)ps.splice(j,1);}}
+function draw(){g.clearRect(0,0,cv.width,cv.height);g.fillStyle='#1a1a1a';g.fillRect(0,360,cv.width,40);g.strokeStyle='#c41e3a';g.lineWidth=2;g.beginPath();g.moveTo(0,360);g.lineTo(cv.width,360);g.stroke();
+var h=P.c?42:70,y=P.c?P.y+28:P.y;
+if(sp2.complete&&sp2.naturalWidth>0){g.save();if(P.k){g.translate(P.x+30,y+h);g.rotate(0.22);g.drawImage(sp2,-32,-h-20,62,h+20);}else if(P.c){g.drawImage(sp2,P.x-6,y-16,62,h+16);}else{var bb=Math.sin(fr*0.15)*2;g.drawImage(sp2,P.x-6,y+bb-18,62,h+18);}g.restore();}
+else{g.fillStyle=P.k?'#ff4d6d':'#e0e0e0';g.fillRect(P.x,y,50,h);g.fillStyle='#c41e3a';g.fillRect(P.x+32,y+12,8,8);}
+ds.forEach(function(d){if(!d.b){g.fillStyle='#2c2c2c';g.fillRect(d.x,d.y,d.w,d.h);g.fillStyle='#c41e3a';g.fillRect(d.x+12,d.y+30,14,14);}});
+ps.forEach(function(p){g.fillStyle='rgba(196, 30, 58, '+(p.l/45)+')';g.fillRect(p.x,p.y,4,4);});}
+function loop(){up();draw();requestAnimationFrame(loop);}
+loadL();loop();
+})();
+/* ===== Ивент Apofis: музыка, таймеры, штурм, анимации, звонок Bell ===== */
 (function(){
 function init(){
-function m(){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var g2=document.getElementById('bell-glitch');if(!g2){g2=document.createElement('div');g2.id='bell-glitch';document.body.appendChild(g2);}g2.style.opacity='1';var an=g2.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-3px)'},{transform:'translateX(0)'}],{duration:100,iterations:18});an.finished.then(function(){g2.style.opacity='0';}).catch(function(){g2.style.opacity='0';});}
-window.triggerBellGlitch=m;
+function g0(){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var gl=document.getElementById('bell-glitch');if(!gl){gl=document.createElement('div');gl.id='bell-glitch';document.body.appendChild(gl);}gl.style.opacity='1';var an=gl.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-3px)'},{transform:'translateX(0)'}],{duration:100,iterations:18});an.finished.then(function(){gl.style.opacity='0';}).catch(function(){gl.style.opacity='0';});}
 window.animateLunge=function(c){if(!c||!c.animate)return;return c.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-16px) scale(1.07)'},{transform:'translateY(0) scale(1)'}],{duration:380,easing:'ease-out'});};
 window.animateShake=function(c){if(!c||!c.animate)return;return c.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(-4px)'},{transform:'translateX(0)'}],{duration:320,easing:'ease-in-out'});};
 window.animateBellAppear=function(c){if(!c||!c.animate)return;return c.animate([{opacity:0,transform:'scale(0.6) translateY(20px)'},{opacity:1,transform:'scale(1.05) translateY(-4px)'},{opacity:1,transform:'scale(1) translateY(0)'}],{duration:700,easing:'ease-out'});};
-var WAAPI={'gx3-lunge':'animateLunge','ap-lunge':'animateLunge','gx3-shake':'animateShake','ap-shake':'animateShake','gx3-bell-appear':'animateBellAppear'};
+var WC={'gx3-lunge':'animateLunge','ap-lunge':'animateLunge','gx3-shake':'animateShake','ap-shake':'animateShake','gx3-bell-appear':'animateBellAppear'};
 [document.getElementById('vrpg3-party'),document.getElementById('ap-party'),document.getElementById('vrpg3-enemies'),document.getElementById('ap-enemies')].forEach(function(c){if(!c)return;
-function hnd(el){for(var k in WAAPI){if(el.classList&&el.classList.contains(k)){el.classList.remove(k);var fn=window[WAAPI[k]];if(typeof fn==='function')fn(el);return;}}}
+function hnd(el){for(var k in WC){if(el.classList&&el.classList.contains(k)){el.classList.remove(k);var fn=window[WC[k]];if(typeof fn==='function')fn(el);return;}}}
 c.querySelectorAll('.gx3-card, .ap-card').forEach(hnd);
 new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='attributes'&&m.attributeName==='class')hnd(m.target);if(m.type==='childList'){m.addedNodes.forEach(function(n){if(n.nodeType!==1)return;hnd(n);if(n.querySelectorAll)n.querySelectorAll('.gx3-card, .ap-card').forEach(hnd);});}});}).observe(c,{attributes:true,attributeFilter:['class'],childList:true,subtree:true});});
+var BURL='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%91%D1%8D%D0%BB%D1%8C%20(mp3cut.net).mp3';
+var bA2=null,bUn=false;
+function pre(){if(bA2)return;try{bA2=new Audio(BURL);bA2.volume=0.55;bA2.preload='auto';bA2.load();}catch(e){}}
+document.addEventListener('pointerdown',pre,{once:true});document.addEventListener('keydown',pre,{once:true});
+function unl(){if(bUn)return;bUn=true;pre();if(bA2){var p=bA2.play();if(p&&p.catch){p.then(function(){bA2.pause();bA2.currentTime=0;}).catch(function(){bUn=false;});}}}
+document.addEventListener('pointerdown',unl,{once:true});document.addEventListener('keydown',unl,{once:true});
+function playB(){pre();if(!bA2||!bUn){document.addEventListener('pointerdown',function(){pre();if(bA2){bA2.currentTime=0;bA2.play().catch(function(){});}},{once:true});return;}
+bA2.currentTime=0;var p=bA2.play();if(p&&p.catch){p.catch(function(){document.addEventListener('pointerdown',function(){bA2.currentTime=0;bA2.play().catch(function(){});},{once:true});});}}
+var bOn=false;var pEl=document.getElementById('vrpg3-party');
+if(pEl){var chk=function(){var has=!!pEl.querySelector('.gx3-bell');if(has&&!bOn){playB();g0();}bOn=has;};
+chk();new MutationObserver(chk).observe(pEl,{childList:true});}
 var ET='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Arma%20Event.mp3',eA=null,bw=false;
 function pB(){var b=window.gxBackgroundAudio;if(b&&b.el){bw=!b.el.paused;b.el.pause();}}
 function rB(){var b=window.gxBackgroundAudio;if(b&&b.el&&bw)b.el.play().catch(function(){});}
@@ -274,27 +364,28 @@ var OV=document.getElementById('apofis-overlay'),AC=document.getElementById('apo
 if(OV){if(OV.dataset.eM!=='1'){OV.dataset.eM='1';var sh2=false;new MutationObserver(function(){var v=OV.style.display!=='none';if(v&&!sh2){sh2=true;eOn();}else if(!v&&sh2){sh2=false;}}).observe(OV,{attributes:true,attributeFilter:['style']});}
 if(AC&&DC&&OV.dataset.eT!=='1'){OV.dataset.eT='1';
 if(localStorage.getItem('apofis_defeat')==='true')document.body.classList.add('grayscale');
-function shE(){var s=document.getElementById('apofis-assault');if(s&&s.style.display!=='none'&&s.style.display!=='')return;if(OV.style.display==='flex')return;OV.style.display='flex';}
-function hE(){OV.style.display='none';}
+var shE=function(){var s=document.getElementById('apofis-assault');if(s&&s.style.display!=='none'&&s.style.display!=='')return;if(OV.style.display==='flex')return;OV.style.display='flex';};
+var hE=function(){OV.style.display='none';};
 setTimeout(shE,45000);setInterval(shE,15*60*1000);
 AC.addEventListener('click',function(){hE();var a=document.getElementById('apofis-assault');if(a){a.style.display='block';a.scrollIntoView({behavior:'smooth'});if(window.apStartAssault)window.apStartAssault();}});
 DC.addEventListener('click',function(){hE();var s=document.getElementById('apofis-assault');if(!s||s.style.display==='none'||s.style.display==='')eOff();});}}
-/* Штурм APOFIS */
 var S=document.getElementById('apofis-assault');
 if(S){var aPh=document.getElementById('ap-phase'),aEn=document.getElementById('ap-enemies'),aPt=document.getElementById('ap-party'),aAc=document.getElementById('ap-actions'),aLg=document.getElementById('ap-log'),aRs=document.getElementById('ap-result'),aRT=document.getElementById('ap-result-title'),aRD=document.getElementById('ap-result-desc'),aRB=document.getElementById('ap-result-btn');
 if(aPh&&aEn&&aPt&&aAc&&aLg&&aRs){
 var EN=[{n:'Штурмовик APOFIS',hp:95,atk:16},{n:'Тяжёлый Юнит',hp:130,atk:14},{n:'Элитный Каратель',hp:110,atk:19},{n:'Кибер-Палач',hp:100,atk:17}];
-var B64='https://verstka-sites.s3.cloud.ru/assets/2952/';
-var HR=[{n:'N-04',col:'#dd4e60',hp:140,atk:16,img:'☠',p:B64+'upload_2855eb8ffe87460dbdf8a9ca45c11619.webp'},{n:'Alisa',col:'#9fd18a',hp:115,atk:11,img:'✦',p:B64+'upload_6f039d5415e34c3eaeaa619ea0eab764.webp'},{n:'Crysta',col:'#7fb8d8',hp:105,atk:15,img:'◎',p:B64+'upload_eefa4dbd38fc48079c75b1c91712b0c3.webp'},{n:'Sky',col:'#c9b8e8',hp:95,atk:14,img:'🕶',p:B64+'upload_2a74b6dd02504bcbb51a86b587c95a0a.webp'}];
+var B642='https://verstka-sites.s3.cloud.ru/assets/2952/';
+var HR2=[{n:'N-04',col:'#dd4e60',hp:140,atk:16,img:'☠',p:B642+'upload_2855eb8ffe87460dbdf8a9ca45c11619.webp'},{n:'Alisa',col:'#9fd18a',hp:115,atk:11,img:'✦',p:B642+'upload_6f039d5415e34c3eaeaa619ea0eab764.webp'},{n:'Crysta',col:'#7fb8d8',hp:105,atk:15,img:'◎',p:B642+'upload_eefa4dbd38fc48079c75b1c91712b0c3.webp'},{n:'Sky',col:'#c9b8e8',hp:95,atk:14,img:'🕶',p:B642+'upload_2a74b6dd02504bcbb51a86b587c95a0a.webp'}];
 var S2=null;
 function rn(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function ll2(m,c){var d=document.createElement('div');d.textContent=m;if(c)d.style.color=c;aLg.appendChild(d);aLg.scrollTop=aLg.scrollHeight;}
-function apStart(){S2={party:HR.map(function(h,i){return{n:h.n,col:h.col,atk:h.atk,img:h.img,p:h.p,idx:i,hp:h.hp,mx:h.hp,act:false};}),en:[],sel:null,tg:null,busy:false,over:false};
+function apStart(){S2={party:HR2.map(function(h,i){return{n:h.n,col:h.col,atk:h.atk,img:h.img,p:h.p,idx:i,hp:h.hp,mx:h.hp,act:false};}),en:[],sel:null,tg:null,busy:false,over:false};
 var c=rn(3,4);for(var i=0;i<c;i++){var t=EN[rn(0,EN.length-1)],hp=t.hp+rn(10,30);S2.en.push({n:t.n,hp:hp,mx:hp,atk:t.atk+rn(0,4),al:true});}
 aLg.innerHTML='';aRs.style.display='none';ll2('Штурмовой отряд APOFIS ворвался на базу!','#c41e3a');ll2('Отбейте атаку любой ценой.','#e8c060');eOn();rd2();}
 window.apStartAssault=apStart;
 function alE(){return S2.en.filter(function(e){return e.al;});}
-function end2(){if(alE().length===0){S2.over=true;localStorage.removeItem('apofis_defeat');document.body.classList.remove('grayscale');eOff();aRs.style.display='flex';aRT.textContent='ПОБЕДА!';aRT.style.color='#9fd18a';aRD.textContent='Штурмовой отряд APOFIS уничтожен. База снова в безопасности.';return true;}
+function end2(){if(alE().length===0){S2.over=true;localStorage.removeItem('apofis_defeat');document.body.classList.remove('grayscale');eOff();aRs.style.display='flex';aRT.textContent='ПОБЕДА!';aRT.style.color='#9fd18a';aRD.textContent='Штурмовой отряд APOFIS уничтожен. База снова в безопасности.';
+try{var AK='grey_empire_achv',AS=JSON.parse(localStorage.getItem(AK)||'{}');if(!AS.ach3){AS.ach3=true;localStorage.setItem(AK,JSON.stringify(AS));if(typeof window.showAch==='function')window.showAch({n:'Всегда на чеку!',d:'Первая победа на ивенте'});}}catch(e){}
+return true;}
 if(S2.party.every(function(h){return h.hp<=0;})){S2.over=true;localStorage.setItem('apofis_defeat','true');document.body.classList.add('grayscale');eOff();aRs.style.display='flex';aRT.textContent='ПОРАЖЕНИЕ!';aRT.style.color='#c41e3a';aRD.textContent='База захвачена. Сайт переведён в режим подавления до следующей победы.';return true;}return false;}
 function rd2(){aPh.textContent=S2.over?'Бой окончен':(S2.busy?'Враги атакуют…':'Ваш ход');
 aEn.innerHTML='';S2.en.forEach(function(e,i){if(!e.al)return;var c=document.createElement('div');c.className='ap-card'+(S2.tg===i?' ap-selected':'');c.dataset.eid=i;var p=Math.max(0,Math.round(e.hp/e.mx*100));
@@ -325,7 +416,8 @@ var c=aPt.querySelector('[data-uid="'+t.idx+'"]');if(c){if(window.animateShake)w
 ll2(e.n+' бьёт '+t.n+': −'+dm,'#dd4e60');
 if(t.hp<=0){t.hp=0;ll2('✖ '+t.n+' пал!','#c41e3a');}});
 S2.party.forEach(function(p){if(p.hp>0)p.act=false;});S2.busy=false;if(!end2())rd2();}
-aRB.addEventListener('click',function(){aRs.style.display='none';S.style.display='none';var a=document.getElementById('rpg-section');if(a)a.scrollIntoView({behavior:'smooth'});});}}}
+aRB.addEventListener('click',function(){aRs.style.display='none';S.style.display='none';var a=document.getElementById('rpg-section');if(a)a.scrollIntoView({behavior:'smooth'});});}}
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 /* ===== Видеоэффект ульты Bell (x1.5, только Bell) ===== */
@@ -365,7 +457,7 @@ ready(function(){
 var KEY='grey_empire_achv';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return{};}}
 function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
-var ACH=[{id:'ach1',n:'Новичок на поле боя!',d:'Пройдена первая волна'},{id:'ach2',n:'Рядовой вояка!',d:'Пройдено пять волн'}];
+var ACH=[{id:'ach1',n:'Новичок на поле боя!',d:'Пройдена первая волна'},{id:'ach2',n:'Рядовой вояка!',d:'Пройдено пять волн'},{id:'ach3',n:'Всегда на чеку!',d:'Первая победа на ивенте'}];
 if(!document.getElementById('ach-css')){var s=document.createElement('style');s.id='ach-css';
 s.textContent='@keyframes acWingL{0%{opacity:0;transform:rotate(35deg) scaleX(.2)}20%{opacity:1;transform:rotate(15deg) scaleX(1)}60%{transform:rotate(25deg) scaleX(.9)}100%{opacity:1;transform:rotate(30deg) scaleX(1)}}@keyframes acWingR{0%{opacity:0;transform:rotate(-35deg) scaleX(.2)}20%{opacity:1;transform:rotate(-15deg) scaleX(1)}60%{transform:rotate(-25deg) scaleX(.9)}100%{opacity:1;transform:rotate(-30deg) scaleX(1)}}@keyframes acPop{0%{opacity:0;transform:rotate(45deg) scale(.3)}25%{opacity:1;transform:rotate(45deg) scale(1.15)}45%{transform:rotate(45deg) scale(1)}100%{opacity:1;transform:rotate(45deg) scale(1)}}@keyframes acName{0%,30%{opacity:0;transform:translateY(12px)}50%,78%{opacity:1;transform:translateY(0)}100%{opacity:0}}@keyframes acOut{0%{opacity:1}88%{opacity:1}100%{opacity:0}}@keyframes acPart{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(.3)}}#achOv{position:fixed;inset:0;z-index:99994;pointer-events:none;display:flex;align-items:center;justify-content:center}#achOv .wrap{position:relative;display:flex;flex-direction:column;align-items:center;animation:acOut 2.9s ease-in forwards}#achOv .dia{width:110px;height:110px;background:linear-gradient(135deg,#fff,#cfd8e3);box-shadow:0 0 40px #fff,0 0 100px rgba(255,255,255,.6);animation:acPop 2.2s ease-out forwards;position:relative}#achOv .wL,#achOv .wR{position:absolute;top:50%;width:120px;height:70px;background:linear-gradient(180deg,#fff,#e6ecf2);border-radius:60% 40% 45% 55%/70% 60% 40% 30%;box-shadow:0 0 30px rgba(255,255,255,.9)}#achOv .wL{right:100%;margin-right:6px;transform-origin:right center;animation:acWingL 2.2s ease-out forwards}#achOv .wR{left:100%;margin-left:6px;transform-origin:left center;animation:acWingR 2.2s ease-out forwards}#achOv .nm{margin-top:26px;font-weight:700;letter-spacing:2px;color:#fff;text-shadow:0 0 20px #fff;font-size:clamp(18px,4vw,32px);text-transform:uppercase;animation:acName 2.6s ease-out forwards;white-space:nowrap}#achOv .p{position:fixed;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff;pointer-events:none;z-index:99994}';
 document.head.appendChild(s);}
@@ -380,6 +472,7 @@ function show(a){var ov=document.createElement('div');ov.id='achOv';
 ov.innerHTML='<div class="wrap"><div class="dia"><div class="wL"></div><div class="wR"></div></div><div class="nm">'+a.n+'</div></div>';
 document.body.appendChild(ov);
 setTimeout(function(){boom();ov.remove();},2700);}
+window.showAch=show;
 function grant(id){var st2=load();if(st2[id])return;st2[id]=true;save(st2);
 var a=null;for(var i=0;i<ACH.length;i++)if(ACH[i].id===id)a=ACH[i];
 if(a)show(a);}
