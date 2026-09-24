@@ -358,3 +358,65 @@ if(t.indexOf(n+' использует ульту')!==-1){setTimeout(function(nm)
 ['vrpg3-log','ap-log'].forEach(function(id){var e=document.getElementById(id);if(e)hook(e);else{var iv=setInterval(function(){var x=document.getElementById(id);if(x){clearInterval(iv);hook(x);}},500);setTimeout(function(){clearInterval(iv);},15000);}});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
+/* ===== Достижения Хроник: вкладка + эффект награды ===== */
+(function(){
+function ready(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',f);else f();}
+ready(function(){
+var KEY='grey_empire_achv';
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){return{};}}
+function save(o){try{localStorage.setItem(KEY,JSON.stringify(o));}catch(e){}}
+var ACH=[{id:'ach1',n:'Новичок на поле боя!',d:'Пройдена первая волна'},{id:'ach2',n:'Рядовой вояка!',d:'Пройдено пять волн'}];
+if(!document.getElementById('ach-css')){var s=document.createElement('style');s.id='ach-css';
+s.textContent='@keyframes acWingL{0%{opacity:0;transform:rotate(35deg) scaleX(.2)}20%{opacity:1;transform:rotate(15deg) scaleX(1)}60%{transform:rotate(25deg) scaleX(.9)}100%{opacity:1;transform:rotate(30deg) scaleX(1)}}@keyframes acWingR{0%{opacity:0;transform:rotate(-35deg) scaleX(.2)}20%{opacity:1;transform:rotate(-15deg) scaleX(1)}60%{transform:rotate(-25deg) scaleX(.9)}100%{opacity:1;transform:rotate(-30deg) scaleX(1)}}@keyframes acPop{0%{opacity:0;transform:rotate(45deg) scale(.3)}25%{opacity:1;transform:rotate(45deg) scale(1.15)}45%{transform:rotate(45deg) scale(1)}100%{opacity:1;transform:rotate(45deg) scale(1)}}@keyframes acName{0%,30%{opacity:0;transform:translateY(12px)}50%,78%{opacity:1;transform:translateY(0)}100%{opacity:0}}@keyframes acOut{0%{opacity:1}88%{opacity:1}100%{opacity:0}}@keyframes acPart{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(.3)}}#achOv{position:fixed;inset:0;z-index:99994;pointer-events:none;display:flex;align-items:center;justify-content:center}#achOv .wrap{position:relative;display:flex;flex-direction:column;align-items:center;animation:acOut 2.9s ease-in forwards}#achOv .dia{width:110px;height:110px;background:linear-gradient(135deg,#fff,#cfd8e3);box-shadow:0 0 40px #fff,0 0 100px rgba(255,255,255,.6);animation:acPop 2.2s ease-out forwards;position:relative}#achOv .wL,#achOv .wR{position:absolute;top:50%;width:120px;height:70px;background:linear-gradient(180deg,#fff,#e6ecf2);border-radius:60% 40% 45% 55%/70% 60% 40% 30%;box-shadow:0 0 30px rgba(255,255,255,.9)}#achOv .wL{right:100%;margin-right:6px;transform-origin:right center;animation:acWingL 2.2s ease-out forwards}#achOv .wR{left:100%;margin-left:6px;transform-origin:left center;animation:acWingR 2.2s ease-out forwards}#achOv .nm{margin-top:26px;font-weight:700;letter-spacing:2px;color:#fff;text-shadow:0 0 20px #fff;font-size:clamp(18px,4vw,32px);text-transform:uppercase;animation:acName 2.6s ease-out forwards;white-space:nowrap}#achOv .p{position:fixed;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff;pointer-events:none;z-index:99994}';
+document.head.appendChild(s);}
+function boom(){var cx=window.innerWidth/2,cy=window.innerHeight/2-20;
+for(var i=0;i<42;i++){var p=document.createElement('div');p.className='p';p.style.left=cx+'px';p.style.top=cy+'px';
+var a=Math.random()*Math.PI*2,d2=80+Math.random()*240;
+p.style.setProperty('--x',Math.cos(a)*d2+'px');p.style.setProperty('--y',Math.sin(a)*d2+'px');
+p.style.animation='acPart '+(0.8+Math.random()*0.6)+'s ease-out forwards';
+document.body.appendChild(p);
+(function(x){setTimeout(function(){x.remove();},1600);})(p);}}
+function show(a){var ov=document.createElement('div');ov.id='achOv';
+ov.innerHTML='<div class="wrap"><div class="dia"><div class="wL"></div><div class="wR"></div></div><div class="nm">'+a.n+'</div></div>';
+document.body.appendChild(ov);
+setTimeout(function(){boom();ov.remove();},2700);}
+function grant(id){var st2=load();if(st2[id])return;st2[id]=true;save(st2);
+var a=null;for(var i=0;i<ACH.length;i++)if(ACH[i].id===id)a=ACH[i];
+if(a)show(a);}
+function open(){var st2=load();
+var ov=document.createElement('div');
+ov.style.cssText='position:fixed;inset:0;z-index:99993;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);pointer-events:auto';
+var box=document.createElement('div');
+box.style.cssText='background:#0a0a0a;border:1px solid #e8c060;padding:28px 32px;max-width:420px;width:90%;text-align:center;font-family:inherit;color:#ddd';
+var h=document.createElement('div');h.textContent='🏆 Достижения';h.style.cssText='color:#e8c060;font-size:20px;font-weight:700;letter-spacing:2px;margin-bottom:18px';box.appendChild(h);
+ACH.forEach(function(a){var got=!!st2[a.id];
+var row=document.createElement('div');row.style.cssText='padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);text-align:left';
+row.innerHTML='<div style="font-weight:700;color:'+(got?'#e8c060':'#666')+'">'+(got?'★ ':'☆ ')+a.n+'</div><div style="font-size:12px;color:#999;margin-top:3px">'+(got?a.d:'??? — '+a.d)+'</div>';
+box.appendChild(row);});
+var cl=document.createElement('button');cl.textContent='Закрыть';
+cl.style.cssText='margin-top:18px;padding:8px 26px;background:transparent;border:1px solid #e8c060;color:#e8c060;cursor:pointer;border-radius:8px;font-family:inherit;font-size:14px';
+cl.onclick=function(){ov.remove();};box.appendChild(cl);
+ov.appendChild(box);document.body.appendChild(ov);
+ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});}
+var iv=setInterval(function(){var w=document.getElementById('vrpg3-wave');if(!w)return;
+var board=document.getElementById('vrpg3-board');
+if(board&&!document.getElementById('ach-tab-btn')){
+var bar=document.createElement('div');bar.style.cssText='display:flex;justify-content:center;margin:0 0 14px';
+var b=document.createElement('button');b.id='ach-tab-btn';b.textContent='🏆 Достижения';
+b.style.cssText='padding:8px 22px;background:rgba(0,0,0,.55);border:1px solid #e8c060;color:#e8c060;font-weight:600;letter-spacing:1px;cursor:pointer;border-radius:8px;font-family:inherit;font-size:14px';
+b.onclick=open;bar.appendChild(b);
+board.parentNode.insertBefore(bar,board);}
+clearInterval(iv);
+var prev=w.textContent.trim();
+new MutationObserver(function(){var cur=w.textContent.trim();
+var c=parseInt(cur,10),p=parseInt(prev,10);
+if(!isNaN(c)&&!isNaN(p)&&c>p){var cleared=p;
+var st3=load(),m=st3.maxCleared||0;
+if(cleared>m){st3.maxCleared=cleared;save(st3);
+if(cleared>=1)grant('ach1');
+if(cleared>=5)grant('ach2');}}
+prev=cur;}).observe(w,{childList:true,characterData:true,subtree:true});
+},400);
+setTimeout(function(){clearInterval(iv);},20000);
+});
+})();
