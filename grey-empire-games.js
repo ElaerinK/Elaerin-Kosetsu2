@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v11.2: единый путь гостя (как у Bell), монетка 50/50 назначает личность */
+/* Хроники Grey Empire v12: ВСЁ ВМЕСТЕ — ядро, Griffin, музыка, карточки, Door Breaker */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -79,37 +79,23 @@ for(var i=0;i<c;i++){var h2=40+w*12+rnd(0,12);L.push({n:N[rnd(0,4)],hp:h2,mx:h2,
 return L;}
 function arm(e,d){if(e&&e.mecha&&e.sh>0)return Math.max(1,Math.round(d*0.6));return d;}
 function mkB(){var l=blv();return{def:BL,idx:99,lv:l,hp:BL.hp+(l-1)*20,mx:BL.hp+(l-1)*20,atk:BL.atk+(l-1)*2.5,cr:BL.cr,cd2:BL.cd,ac:BL.ac,dd:BL.dd,act:false,uc:0,bell:true};}
-/* Единый конструктор гостя: создаётся как Bell, монетка назначает личность */
-function mkGuest(){
-var g=mkB(); /* проверенный путь Bell */
-var isGriffin=(Math.random()<0.5);
-if(isGriffin){
-g.def=GR;g.idx=98;g.griffin=true;g.bell=false;
-g.hp=GR.hp+(g.lv-1)*20;g.mx=GR.hp+(g.lv-1)*20;g.atk=GR.atk+(g.lv-1)*2.5;g.cr=GR.cr+GRC;g.cd2=GR.cd;g.ac=GR.ac;g.dd=GR.dd;
-g.smCd=0;g.revUsed=false;
-}
-return{guest:g,isGriffin:isGriffin};
-}
+function mkG(){var l=blv();return{def:GR,idx:98,lv:l,hp:GR.hp+(l-1)*20,mx:GR.hp+(l-1)*20,atk:GR.atk+(l-1)*2.5,cr:GR.cr+GRC,cd2:GR.cd,ac:GR.ac,dd:GR.dd,act:false,uc:0,griffin:true,smCd:0,revUsed:false};}
 function grCrossFallback(){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99995;pointer-events:none;display:flex;align-items:center;justify-content:center;background:rgba(0,40,18,.45)';var b=document.createElement('div');b.style.cssText='position:relative;width:220px;height:220px';b.innerHTML='<div style="position:absolute;left:50%;top:0;width:46px;height:220px;transform:translateX(-50%);background:linear-gradient(180deg,#b6ffd0,#2fe97a);box-shadow:0 0 30px #2fe97a;border-radius:6px"></div><div style="position:absolute;top:50%;left:0;width:220px;height:46px;transform:translateY(-50%);background:linear-gradient(180deg,#b6ffd0,#2fe97a);box-shadow:0 0 30px #2fe97a;border-radius:6px"></div>';o.appendChild(b);document.body.appendChild(o);setTimeout(function(){o.remove();},2000);}
-/* Диспетчер гостей: шанс 30% на боссовой волне, единый путь создания + монетка личности.
-   Система сочувствия: 3 гостя без Griffin — четвёртый гарантированно он. */
+/* Единый путь гостя (как у Bell) + монетка 50/50 + сочувствие: 3 без Griffin — четвёртый он */
 var __gxGuestsSinceGriffin=0;
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin;});
 if(st.wave>=5&&Math.random()<0.30){st.bA=true;
 var forceG=(__gxGuestsSinceGriffin>=3);
-var r=mkGuest();
-if(forceG&&!r.isGriffin){ /* принудительно перекрашиваем в Griffin */
-r.guest.def=GR;r.guest.idx=98;r.guest.griffin=true;r.guest.bell=false;
-r.guest.hp=GR.hp+(r.guest.lv-1)*20;r.guest.mx=GR.hp+(r.guest.lv-1)*20;r.guest.atk=GR.atk+(r.guest.lv-1)*2.5;r.guest.cr=GR.cr+GRC;r.guest.cd2=GR.cd;r.guest.ac=GR.ac;r.guest.dd=GR.dd;
-r.guest.smCd=0;r.guest.revUsed=false;r.isGriffin=true;}
-if(r.isGriffin){__gxGuestsSinceGriffin=0;st.gJ=true;
-log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+r.guest.lv+')','#7cff9b');
+var guest=mkB();
+var isGriffin=forceG||(Math.random()<0.5);
+if(isGriffin){guest.def=GR;guest.idx=98;guest.griffin=true;guest.bell=false;guest.smCd=0;guest.revUsed=false;__gxGuestsSinceGriffin=0;st.gJ=true;
+log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+guest.lv+')','#7cff9b');
 try{if(window.GriffinClass){window.GriffinClass.cross();window.GriffinClass.say(0.6);}else{grCrossFallback();say(GVO,0.6);}}catch(e){grCrossFallback();say(GVO,0.6);}}
 else{__gxGuestsSinceGriffin++;st.bJ=true;
-log('🔔 Из темноты появляется Bell... (ур.'+r.guest.lv+')','#e8a0ff');
+log('🔔 Из темноты появляется Bell... (ур.'+guest.lv+')','#e8a0ff');
 say(BVO,0.55);}
-st.party.push(r.guest);
-if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector(r.isGriffin?'.gx3-griffin':'.gx3-bell');if(c)window.animateBellAppear(c);},150);}}}
+st.party.push(guest);
+if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector(isGriffin?'.gx3-griffin':'.gx3-bell');if(c)window.animateBellAppear(c);},150);}}}
 function nb(k){var s=k?sv.maxWave:1;
 st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0};}),en:[],over:false,bA:false,bJ:false,gJ:false};
 st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;
@@ -280,12 +266,59 @@ $('vrpg3-btnReset').onclick=function(){nb(true);};
 $('vrpg3-btnWipe').onclick=function(){if(!confirm('Сбросить прогресс?'))return;sv={levels:[1,1,1,1],xp:[0,0,0,0],maxWave:1};pr();mX();nb(false);};
 nb(true);
 })();
-/* ===== Ивент Apofis: музыка, таймеры, штурм, анимации ===== */
+/* ===== ВОЗВРАЩЁННЫЕ БЛОКИ v12 ===== */
+/* Фоновая музыка + кнопка звука */
+(function(){
+if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+var a=new Audio();a.src='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Elaerin-Kosetsu-Prolog-_%CE%B2_.mp3';a.loop=true;a.volume=0.35;
+window.gxBackgroundAudio={el:a,baseVolume:0.35,duckTo:function(v){a.volume=v;},restore:function(){a.volume=this.baseVolume;}};
+var on=false,b=document.createElement('button');b.id='gx-sound-toggle';b.setAttribute('aria-label','Звук вкл/выкл');b.textContent='🔇';document.body.appendChild(b);
+function r(){b.textContent=on?'🔊':'🔇';b.classList.toggle('on',on);}
+b.addEventListener('click',function(e){e.stopPropagation();window.gxSoundMuted=on;on=!on;if(on)a.play().catch(function(){});else a.pause();r();});
+document.addEventListener('click',function(){if(!on){window.gxSoundMuted=false;on=true;a.play().catch(function(){});r();}},{once:true});
+var cx=null;function t(){try{if(!cx)cx=new(window.AudioContext||window.webkitAudioContext)();if(cx.state==='suspended')cx.resume();var o=cx.createOscillator(),g=cx.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(0.0001,cx.currentTime);g.gain.exponentialRampToValueAtTime(0.03,cx.currentTime+0.01);g.gain.exponentialRampToValueAtTime(0.0001,cx.currentTime+0.12);o.connect(g);g.connect(cx.destination);o.start();o.stop(cx.currentTime+0.14);}catch(e){}}
+document.addEventListener('mouseover',function(e){if(!on)return;var x=e.target.closest('a, button');if(x)t();});
+})();
+/* Всплывающие карточки персонажей на главной */
+(function(){
+if(window.__GX_POP)return;
+window.__GX_POP=true;
+var SWAP=[['upload_8c031b23d67649238457645e20ec2c39','upload_54691077664841278e76a37f596d32a4'],['upload_6f039d5415e34c3eaeaa619ea0eab764','upload_19dc1f6d63fa4de4bbb388795b5f3a0f'],['upload_eefa4dbd38fc48079c75b1c91712b0c3','upload_1ebccbc0ef3249508b98746eef0391dc'],['upload_2a74b6dd02504bcbb51a86b587c95a0a','upload_b3b52365c3844d17b3eef615c4bed8e5']];
+var AL=['Я жила столько лет в голове, а по факту мне нет и месяца...','Первый раз ела настоящую еду. Тело запомнило, а я — нет. Странное чувство.','Сон — это то, о чём я мечтала, будучи лишь голосом в чужой памяти.','Дождь. Я слышала о нём в записях, но почувствовала только вчера.','Мои воспоминания старше меня самой. Забавно, правда?','Иногда я ловлю себя на том, что не знаю, чьи привычки повторяю — мои или её.','Раньше я существовала как данные. Теперь — как человек. Не уверена, что лучше.','Каждое утро просыпаюсь и заново учусь быть живой.'];
+var SKY=['Сколько лет я уже потратил ради поисков смысла...','Сегодня снова ничего не произошло. Для меня это победа.','Я научился ждать. Дольше, чем длится большинство жизней.','Тишина перестала пугать. Теперь она как старый друг.','Смысл не приходил. Пришла привычка его искать.','Я помню рассветы, которые никто больше не видел. Спросите зачем — не отвечу.','Иногда я завтракаю медленно, будто времени у меня с избытком. Может, так и есть.','Смысл где-то был. Я, кажется, проходил мимо него несколько раз.'];
+var bags={};
+function drawFrom(arr,key){if(!arr||!arr.length)return'';if(!bags[key]||!bags[key].length){bags[key]=arr.slice();for(var i=bags[key].length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=bags[key][i];bags[key][i]=bags[key][j];bags[key][j]=t;}}return bags[key].pop();}
+function init(){
+if(!document.querySelector('.gx-hero'))return;
+var CH=[
+{n:"N-04",i:"upload_8c031b23d67649238457645e20ec2c39",l:["Apofis думает, что её стены нерушимы. Мы уже внутри.","Том опять отправил своих псов. Пустая трата подшипников.","Маска треснула — но я всё ещё здесь. Вопреки Apofis.","Меня вывели в пробирке. Эксперимент под номером N-04. Даже имени не дали — только номер.","Клон. Просто клон из чьего-то расчёта. Но сердце бьётся не по формуле.","Я не помню лица матери. Только холодный свет лаборатории и запах стерильности.","Sada... если бы ты была рядом, всё было бы иначе.","Мне не хватает Сады. Её голос заглушал этот пустой шум внутри.","Иногда я смотрю на людей и не понимаю, каково это — быть настоящим.","Сада ждёт меня. Я чувствую это. Я должен вернуться.","(шёпотом) Original... я помню, с чего всё началось...","Империя не забывает долги. Особенно Тому."]},
+{n:"Alisa",i:"upload_6f039d5415e34c3eaeaa619ea0eab764",l:["Apofis ведёт учёт каждого нашего шага. Пусть считает — это их последняя отчётность.","Том подписал ещё один приказ на зачистку. Бумажная крыса со штампом вместо совести.","Я видела планы Apofis. Им не место в этом мире.","Держитесь. Мы дойдём до ядра корпорации.","(шёпотом) Original... если ты слышишь — мы почти у цели...","(шёпотом) Про Original не должен знать даже Том. Особенно Том.","Отряд цел. Моя заслуга — и наша общая победа над Apofis."]},
+{n:"Crysta",i:"upload_eefa4dbd38fc48079c75b1c91712b0c3",l:["Серверы Apofis видели меня. Я не оставила свидетелей.","Том думает, что камеры — его глаза. Я выколола их все.","Ещё один отдел Apofis зачистен. Чисто. Тихо.","Хрусталь острее стали. Спроси у людей Тома.","(шёпотом) Original... ты был прав насчёт корпорации...","(шёпотом) Имя Original — наш последний козырь. Тише.","Не задерживайся. Apofis не любит гостей."]},
+{n:"Sky",i:"upload_2a74b6dd02504bcbb51a86b587c95a0a",l:["...","Apofis. Тени уже внутри её серверов.","Том. Он даже не заметил, как я вошёл.","Том — мерзавец. Но и он лишь пешка Apofis.","(шёпотом) Original... он вернётся. Когда придёт время...","(шёпотом) Только не произноси это имя при Томе.","Мы наблюдаем за тобой. И за Apofis."]}];
+var cur=0,pop=document.createElement('div');
+pop.id='character-popup';pop.innerHTML='<div class="char-bubble" id="charBubble">...</div><div class="char-image" id="charImage"></div>';
+document.body.appendChild(pop);
+function show(){var ch=CH[cur],ci=document.getElementById('charImage'),cb=document.getElementById('charBubble');
+var img=B64+ch.i+'.webp';
+for(var k=0;k<SWAP.length;k++){if(ch.i===SWAP[k][0]){img=B64+SWAP[k][1]+'.webp';break;}}
+var line;
+if(ch.n==='Alisa')line=Math.random()<0.5?drawFrom(AL,'al'):ch.l[Math.floor(Math.random()*ch.l.length)];
+else if(ch.n==='Sky')line=Math.random()<0.5?drawFrom(SKY,'sk'):ch.l[Math.floor(Math.random()*ch.l.length)];
+else line=ch.l[Math.floor(Math.random()*ch.l.length)];
+cb.textContent=line;
+ci.style.backgroundImage="url('"+img+"')";ci.textContent="";
+pop.classList.add("show");
+setTimeout(function(){pop.classList.remove("show");},6500);
+cur=(cur+1)%CH.length;}
+setTimeout(show,8000);setInterval(show,48000);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+/* Ивент Apofis: музыка, таймеры, штурм, анимации */
 (function(){
 if(window.__AP_EVENT_LOADED)return;
 window.__AP_EVENT_LOADED=true;
 function init(){
-function g0(){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;var gl=document.getElementById('bell-glitch');if(!gl){gl=document.createElement('div');gl.id='bell-glitch';document.body.appendChild(gl);}gl.style.opacity='1';var an=gl.animate([{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(-3px)'},{transform:'translateX(0)'}],{duration:100,iterations:18});an.finished.then(function(){gl.style.opacity='0';}).catch(function(){gl.style.opacity='0';});}
 window.animateLunge=function(c){if(!c||!c.animate)return;return c.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-16px) scale(1.07)'},{transform:'translateY(0) scale(1)'}],{duration:380,easing:'ease-out'});};
 window.animateShake=function(c){if(!c||!c.animate)return;return c.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(-4px)'},{transform:'translateX(0)'}],{duration:320,easing:'ease-in-out'});};
 window.animateBellAppear=function(c){if(!c||!c.animate)return;return c.animate([{opacity:0,transform:'scale(0.6) translateY(20px)'},{opacity:1,transform:'scale(1.05) translateY(-4px)'},{opacity:1,transform:'scale(1) translateY(0)'}],{duration:700,easing:'ease-out'});};
@@ -360,7 +393,7 @@ aRB.addEventListener('click',function(){aRs.style.display='none';S.style.display
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
-/* ===== Видеоэффект ульты Bell ===== */
+/* Видеоэффект ульты Bell */
 (function(){
 var V='https://verstka-sites.s3.cloud.ru/assets/2952/upload_8c007282c77f4f998e7e0e2962ff42e1.mp4';
 var o=null,v=null,pl=false;
@@ -370,7 +403,7 @@ function h(){pl=false;if(o)o.style.display='none';try{v.pause();}catch(e){}}
 window.showBellUltVideo=s2;
 document.addEventListener('pointerdown',function(){if(!o)b2();},{once:true});
 })();
-/* ===== Боевые реплики персонажей ===== */
+/* Боевые реплики персонажей */
 (function(){
 if(window.__GX_VOICE_LINES)return;
 window.__GX_VOICE_LINES=true;
@@ -392,7 +425,7 @@ if(t.indexOf(n+' использует ульту')!==-1){setTimeout(function(nm)
 ['vrpg3-log','ap-log'].forEach(function(id){var e=document.getElementById(id);if(e)hook(e);else{var iv=setInterval(function(){var x=document.getElementById(id);if(x){clearInterval(iv);hook(x);}},500);setTimeout(function(){clearInterval(iv);},15000);}});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
-/* ===== Достижения: вкладка + эффект награды ===== */
+/* Достижения: вкладка + эффект награды */
 (function(){
 if(window.__GX_ACH)return;
 window.__GX_ACH=true;
@@ -455,12 +488,11 @@ prev=cur;}).observe(w,{childList:true,characterData:true,subtree:true});
 },300);
 });
 })();
-/* ===== КЛАСС GRIFFIN: только эффекты и озвучка (карточку создаёт боевой код) ===== */
+/* Класс Griffin: эффекты и озвучка */
 (function(){
 if(window.GriffinClass)return;
 var GriffinClass={
-	vo:'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%93%D1%80%D0%B8%D1%84%D0%B8%D0%BD%20(mp3cut.net).mp3',
-	au:null,
+	vo:GVO,au:null,
 	say:function(vol){try{
 		if(!this.au){this.au=new Audio(this.vo);this.au.volume=vol||0.6;this.au.preload='auto';this.au.load();}
 		var self=this,n=0;
