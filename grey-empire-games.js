@@ -1,7 +1,6 @@
-/* Хроники Grey Empire v10: Bell (старая логика) + Griffin (отдельный класс) + Достижения */
+/* Хроники Grey Empire v10.1: Bell (старая логика) + Griffin (класс эффектов/голоса, карточку создаёт бой) */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
-window.__GRE_EMPILE_LOADED__PLACEHOLDER=null;
 window.__GRE_EMPIRE_LOADED=true;
 var $=function(i){return document.getElementById(i);};
 var wv=$('vrpg3-wave'),ph=$('vrpg3-phase'),lg=$('vrpg3-log'),en=$('vrpg3-enemies'),pt=$('vrpg3-party'),ac2=$('vrpg3-actions'),rs=$('vrpg3-result'),bt=$('vrpg3-bossTag');
@@ -82,14 +81,20 @@ return L;}
 function arm(e,d){if(e&&e.mecha&&e.sh>0)return Math.max(1,Math.round(d*0.6));return d;}
 function mkB(){var l=blv();return{def:BL,idx:99,lv:l,hp:BL.hp+(l-1)*20,mx:BL.hp+(l-1)*20,atk:BL.atk+(l-1)*2.5,cr:BL.cr,cd2:BL.cd,ac:BL.ac,dd:BL.dd,act:false,uc:0,bell:true};}
 function mkG(){var l=blv();return{def:GR,idx:98,lv:l,hp:GR.hp+(l-1)*20,mx:GR.hp+(l-1)*20,atk:GR.atk+(l-1)*2.5,cr:GR.cr+GRC,cd2:GR.cd,ac:GR.ac,dd:GR.dd,act:false,uc:0,griffin:true,smCd:0,revUsed:false};}
-/* Диспетчер гостей: общий шанс 30% на боссовой волне, монетка решает — Bell (старая логика) или класс Griffin */
+/* Диспетчер гостей: шанс 30% на боссовой волне, монетка — Bell (старая логика) или Griffin.
+   Карточку Griffin создаёт ЭТОТ код (там, где всё работает), класс — только крест и голос. */
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin;});
 if(st.wave>=5&&Math.random()<0.30){st.bA=true;
 if(Math.random()<0.5){var b=mkB();st.party.push(b);st.bJ=true;
 log('🔔 Из темноты появляется Bell... (ур.'+b.lv+')','#e8a0ff');
 say(BVO,0.55);
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell');if(c)window.animateBellAppear(c);},100);}}
-else{if(window.GriffinClass){window.GriffinClass.spawn(st);}else{var g2=mkG();st.party.push(g2);st.gJ=true;grCross();log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g2.lv+')','#7cff9b');say(GVO,0.6);}}}}
+else{var g2=mkG();st.party.push(g2);st.gJ=true;
+log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g2.lv+')','#7cff9b');
+try{if(window.GriffinClass){window.GriffinClass.cross();window.GriffinClass.say(0.6);}else{grCrossFallback();say(GVO,0.6);}}catch(e){grCrossFallback();say(GVO,0.6);}
+if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-griffin');if(c)window.animateBellAppear(c);},150);}}}}
+/* Запасной зелёный крест, если класс не загрузился */
+function grCrossFallback(){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99995;pointer-events:none;display:flex;align-items:center;justify-content:center;background:rgba(0,40,18,.45)';var b=document.createElement('div');b.style.cssText='position:relative;width:220px;height:220px';b.innerHTML='<div style="position:absolute;left:50%;top:0;width:46px;height:220px;transform:translateX(-50%);background:linear-gradient(180deg,#b6ffd0,#2fe97a);box-shadow:0 0 30px #2fe97a;border-radius:6px"></div><div style="position:absolute;top:50%;left:0;width:220px;height:46px;transform:translateY(-50%);background:linear-gradient(180deg,#b6ffd0,#2fe97a);box-shadow:0 0 30px #2fe97a;border-radius:6px"></div>';o.appendChild(b);document.body.appendChild(o);setTimeout(function(){o.remove();},2000);}
 function nb(k){var s=k?sv.maxWave:1;
 st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0};}),en:[],over:false,bA:false,bJ:false,gJ:false};
 st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;
@@ -435,11 +440,10 @@ prev=cur;}).observe(w,{childList:true,characterData:true,subtree:true});
 },300);
 });
 })();
-/* ===== КЛАСС GRIFFIN: самостоятельный модуль появления, эффектов и озвучки ===== */
+/* ===== КЛАСС GRIFFIN: только эффекты и озвучка (карточку создаёт боевой код) ===== */
 (function(){
-function ready(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',f);else f();}
+if(window.GriffinClass)return;
 var GriffinClass={
-	name:'Griffin',
 	vo:'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%93%D1%80%D0%B8%D1%84%D0%B8%D0%BD%20(mp3cut.net).mp3',
 	au:null,
 	say:function(vol){try{
@@ -451,18 +455,7 @@ var GriffinClass={
 	}catch(e){}},
 	cross:function(){var o=document.createElement('div');o.id='grOv';var b=document.createElement('div');b.className='bx';b.innerHTML='<div class="b1"></div><div class="b2"></div>';o.appendChild(b);
 	for(var i=0;i<26;i++){var d=document.createElement('div');d.className='dst';var a=Math.random()*Math.PI*2,r=90+Math.random()*160;d.style.setProperty('--dx',Math.cos(a)*r+'px');d.style.setProperty('--dy',Math.sin(a)*r+'px');d.style.animationDelay=(0.7+Math.random()*0.6)+'s';b.appendChild(d);}
-	document.body.appendChild(o);setTimeout(function(){o.remove();},2400);},
-	spawn:function(st){
-		try{
-			var g=mkG();st.party.push(g);st.gJ=true;
-			this.cross();
-			this.say(0.6);
-			log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g.lv+')','#7cff9b');
-			if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-griffin');if(c)window.animateBellAppear(c);},150);}
-		}catch(e){
-			try{var g2=mkG();st.party.push(g2);st.gJ=true;log('✚ Griffin вступает в бой!','#7cff9b');say(GVO,0.6);}catch(e2){}
-		}
-	}
+	document.body.appendChild(o);setTimeout(function(){o.remove();},2400);}
 };
 window.GriffinClass=GriffinClass;
 })();
