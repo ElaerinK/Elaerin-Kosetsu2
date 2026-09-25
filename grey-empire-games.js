@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v11: Bell (старая логика) + Griffin (класс) + очередь гостей Bell→Griffin */
+/* Хроники Grey Empire v11.1: монетка 50/50 (без localStorage) + сочувствие Griffin */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -32,7 +32,6 @@ var GR={n:'Griffin',cl:'Медик-штурмовик',st:4,col:'#7cff9b',hp:110
 var MA=B64+'upload_6946a52090cc45fd92424c134cf41a7f.webp';
 var MT='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galleon.mp3';
 var MP={ap:['Цель обнаружена. Отряд сопротивления — Grey Empire. Начинаю зачистку.','Протокол: найти и уничтожить все силы сопротивления. Приоритет — Grey Empire.','Сканирование завершено. Сопротивление будет ликвидировано.'],vul:['Залп назначен. Расчёт: уничтожение.','Пулемётная система активна. Цель захвачена.'],rkt:['Ракетный залп запущен. Поражение трёх целей.','Плотность огня максимальна. Сопротивление бесполезно.'],sh:['Укреплённый корпус активирован. Входящий урон снижен на 40%.','Броня перераспределена. Атаки Grey Empire признаны неэффективными.'],kl:['Фрагмент подтверждён. Сопротивление слабеет.','Единица сопротивления уничтожена. Следующая цель.'],df:['Критическое повреждение ядра… Сопротивление… недооценено…']};
-/* Озвучка: три попытки — если браузер заблокировал звук, он заиграет при первом касании */
 var sndUnlocked=false;
 document.addEventListener('pointerdown',function(){sndUnlocked=true;},{once:true});
 document.addEventListener('keydown',function(){sndUnlocked=true;},{once:true});
@@ -81,21 +80,24 @@ return L;}
 function arm(e,d){if(e&&e.mecha&&e.sh>0)return Math.max(1,Math.round(d*0.6));return d;}
 function mkB(){var l=blv();return{def:BL,idx:99,lv:l,hp:BL.hp+(l-1)*20,mx:BL.hp+(l-1)*20,atk:BL.atk+(l-1)*2.5,cr:BL.cr,cd2:BL.cd,ac:BL.ac,dd:BL.dd,act:false,uc:0,bell:true};}
 function mkG(){var l=blv();return{def:GR,idx:98,lv:l,hp:GR.hp+(l-1)*20,mx:GR.hp+(l-1)*20,atk:GR.atk+(l-1)*2.5,cr:GR.cr+GRC,cd2:GR.cd,ac:GR.ac,dd:GR.dd,act:false,uc:0,griffin:true,smCd:0,revUsed:false};}
-/* Запасной зелёный крест, если класс не загрузился */
 function grCrossFallback(){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99995;pointer-events:none;display:flex;align-items:center;justify-content:center;background:rgba(0,40,18,.45)';var b=document.createElement('div');b.style.cssText='position:relative;width:220px;height:220px';b.innerHTML='<div style="position:absolute;left:50%;top:0;width:46px;height:220px;transform:translateX(-50%);background:linear-gradient(180deg,#b6ffd0,#2fe97a);box-shadow:0 0 30px #2fe97a;border-radius:6px"></div><div style="position:absolute;top:50%;left:0;width:220px;height:46px;transform:translateY(-50%);background:linear-gradient(180deg,#b6ffd0,#2fe97a);box-shadow:0 0 30px #2fe97a;border-radius:6px"></div>';o.appendChild(b);document.body.appendChild(o);setTimeout(function(){o.remove();},2000);}
-/* Диспетчер гостей: шанс 30% на боссовой волне, гости идут СТРОГО по очереди Bell → Griffin → Bell → ... (очередь хранится в браузере) */
+/* Диспетчер гостей: шанс 30% на боссовой волне, монетка 50/50 Bell/Griffin.
+   Всё в памяти (localStorage не используется — он мог быть заблокирован и ломал выпадение).
+   Система сочувствия: 3 гостя без Griffin — четвёртый гарантированно он. */
+var __gxGuestsSinceGriffin=0;
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin;});
 if(st.wave>=5&&Math.random()<0.30){st.bA=true;
-var gn=0;try{gn=parseInt(localStorage.getItem('gx_guest_next')||'0',10);}catch(e){gn=0;}
-if(gn===0){var b=mkB();st.party.push(b);st.bJ=true;
+var forceG=(__gxGuestsSinceGriffin>=3);
+var isG=forceG||(Math.random()<0.5);
+if(!isG){var b=mkB();st.party.push(b);st.bJ=true;
+__gxGuestsSinceGriffin++;
 log('🔔 Из темноты появляется Bell... (ур.'+b.lv+')','#e8a0ff');
 say(BVO,0.55);
-try{localStorage.setItem('gx_guest_next','1');}catch(e){}
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell');if(c)window.animateBellAppear(c);},100);}}
 else{var g2=mkG();st.party.push(g2);st.gJ=true;
+__gxGuestsSinceGriffin=0;
 log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g2.lv+')','#7cff9b');
 try{if(window.GriffinClass){window.GriffinClass.cross();window.GriffinClass.say(0.6);}else{grCrossFallback();say(GVO,0.6);}}catch(e){grCrossFallback();say(GVO,0.6);}
-try{localStorage.setItem('gx_guest_next','0');}catch(e){}
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-griffin');if(c)window.animateBellAppear(c);},150);}}}}
 function nb(k){var s=k?sv.maxWave:1;
 st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0};}),en:[],over:false,bA:false,bJ:false,gJ:false};
