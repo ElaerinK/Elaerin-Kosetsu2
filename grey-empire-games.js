@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v9.1: MECHA-GALLEON + Griffin (фикс дублей, криты скиллов) */
+/* Хроники Grey Empire v9.2: MECHA-GALLEON + Griffin + Достижения (кнопка из разметки) */
 (function(){
 var $=function(i){return document.getElementById(i);};
 var wv=$('vrpg3-wave'),ph=$('vrpg3-phase'),lg=$('vrpg3-log'),en=$('vrpg3-enemies'),pt=$('vrpg3-party'),ac2=$('vrpg3-actions'),rs=$('vrpg3-result'),bt=$('vrpg3-bossTag');
@@ -13,7 +13,7 @@ function grWings(){var o=document.createElement('div');o.id='grWg';o.innerHTML='
 var SK='grey_empire_rpg_v4',BE=5,UC=25,UM=1.8,MC=0.20,GRC=10,GRH=2.5;
 function ldS(){try{var s=JSON.parse(localStorage.getItem(SK));if(s&&s.levels)return s;}catch(e){}return{levels:[1,1,1,1],xp:[0,0,0,0],maxWave:1};}
 function pr(){try{localStorage.setItem(SK,JSON.stringify(sv));}catch(e){}}
-var lastPick={};
+/* Мешок фраз: ни одна реплика не повторится, пока весь набор не будет исчерпан */
 function pk(a,key){if(!a||!a.length)return'';if(a.length<2)return a[0];if(!pk.q)pk.q={};var q=pk.q[key];if(!q||!q.length){q=a.slice();for(var i=q.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=q[i];q[i]=q[j];q[j]=t;}pk.q[key]=q;}return q.pop();}
 var BP={attack:['«Ммм… вот так… ещё…»','«Как приятно это ощущать…»','«Не останавливайся…»','«Я упиваюсь каждым ударом…»','«Ох… продолжай…»'],aoe:['«Все сразу… как же хорошо…»','«Они все такие сладкие…»','«Обожаю, когда их много…»','«Дрожите для меня…»'],execute:['«А-аах… ДА!»','«Небеса… это восхитительно!»','«Слишком… слишком хорошо!»','«Ещё… ещё убивай…»','«Я… я почти… ААХ!»'],ult:['«Сейчас будет очень горячо…»','«Получите всю мою силу…»','«Я больше не могу сдерживаться…»','«Исчезайте вместе со мной…»'],kill:['«АААХ! ВОТ ОНО!»','«Да-да-да-дааа!»','«Ещё один… ещё… я схожу с ума…»','«Охх… как глубоко он ушёл…»','«Я сейчас растаю от блаженства…»']};
 var GP={attack:['Огонь по цели. MP-5 стабильна.','Контакт подтверждён. Открываю огонь.','Одиночная цель. Пробиваю очередь.','Стреляю на подавление. Держите линию.','Цель в секторе. Работаю.'],smoke:['Дымовая граната. Прикрываю отряд.','Дым поставлен. Ничего не видно — значит, никто не попадёт.','Завеса развёрнута. Отдышитесь.'],heal:['Держись. Поле — моя операционная.','Рана не смертельна. Шью.','Пакеты перевязки расходуются быстро. Огонь плотный.','Живые важнее победы. Лечу.'],ult:['Второй шанс выделяю один. Цени его.','Отряд не бросаю. Никогда.','Сердце ещё бьётся. Значит, бой продолжается.'],kill:['Цель нейтрализована. Следующая.','Зона чиста.','Счётчик фрагов растёт. Продолжаю.'],crit:['КРИТ! Точно в швы брони!','Идеальный выстрел. Отметил.'],hcrit:['КРИТ-лечение! Медицинское чудо.','Вколола всё. Поднимайтесь.']};
@@ -450,7 +450,7 @@ if(t.indexOf(n+' использует ульту')!==-1){setTimeout(function(nm)
 ['vrpg3-log','ap-log'].forEach(function(id){var e=document.getElementById(id);if(e)hook(e);else{var iv=setInterval(function(){var x=document.getElementById(id);if(x){clearInterval(iv);hook(x);}},500);setTimeout(function(){clearInterval(iv);},15000);}});}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
-/* ===== Достижения Хроник: вкладка + эффект награды ===== */
+/* ===== Достижения: кнопка уже в разметке арены, тут только эффекты и окно ===== */
 (function(){
 function ready(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',f);else f();}
 ready(function(){
@@ -491,15 +491,13 @@ cl.style.cssText='margin-top:18px;padding:8px 26px;background:transparent;border
 cl.onclick=function(){ov.remove();};box.appendChild(cl);
 ov.appendChild(box);document.body.appendChild(ov);
 ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});}
-var iv=setInterval(function(){var w=document.getElementById('vrpg3-wave');if(!w)return;
-var board=document.getElementById('vrpg3-board');
-if(board&&!document.getElementById('ach-tab-btn')){
-var bar=document.createElement('div');bar.style.cssText='display:flex;justify-content:center;margin:0 0 14px';
-var b=document.createElement('button');b.id='ach-tab-btn';b.textContent='🏆 Достижения';
-b.style.cssText='padding:8px 22px;background:rgba(0,0,0,.55);border:1px solid #e8c060;color:#e8c060;font-weight:600;letter-spacing:1px;cursor:pointer;border-radius:8px;font-family:inherit;font-size:14px';
-b.onclick=open;bar.appendChild(b);
-board.parentNode.insertBefore(bar,board);}
+/* Кнопка достижений уже есть в разметке арены — просто вешаем открытие */
+var iv=setInterval(function(){
+var btn=document.getElementById('ach-tab-btn');
+var w=document.getElementById('vrpg3-wave');
+if(!btn||!w)return;
 clearInterval(iv);
+btn.onclick=open;
 var prev=w.textContent.trim();
 new MutationObserver(function(){var cur=w.textContent.trim();
 var c=parseInt(cur,10),p=parseInt(prev,10);
@@ -509,7 +507,6 @@ if(cleared>m){st3.maxCleared=cleared;save(st3);
 if(cleared>=1)grant('ach1');
 if(cleared>=5)grant('ach2');}}
 prev=cur;}).observe(w,{childList:true,characterData:true,subtree:true});
-},400);
-setTimeout(function(){clearInterval(iv);},20000);
+},300);
 });
 })();
