@@ -1,6 +1,7 @@
-/* Хроники Grey Empire v9.3: MECHA-GALLEON + Griffin + Достижения (единый файл, защита от дублей) */
+/* Хроники Grey Empire v10: Bell (старая логика) + Griffin (отдельный класс) + Достижения */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
+window.__GRE_EMPILE_LOADED__PLACEHOLDER=null;
 window.__GRE_EMPIRE_LOADED=true;
 var $=function(i){return document.getElementById(i);};
 var wv=$('vrpg3-wave'),ph=$('vrpg3-phase'),lg=$('vrpg3-log'),en=$('vrpg3-enemies'),pt=$('vrpg3-party'),ac2=$('vrpg3-actions'),rs=$('vrpg3-result'),bt=$('vrpg3-bossTag');
@@ -8,9 +9,6 @@ if(!wv)return;
 (function(){if(document.getElementById('gr-css'))return;var s=document.createElement('style');s.id='gr-css';
 s.textContent='@keyframes grX{0%{opacity:0;transform:scale(.5)}12%{opacity:1;transform:scale(1)}70%{opacity:1;transform:scale(1.12) rotate(6deg)}100%{opacity:0;transform:scale(1.7) rotate(18deg);filter:blur(8px)}}@keyframes grDust{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(.2)}}@keyframes grWingL{0%{opacity:0;transform:rotate(38deg) scaleX(.3)}25%{opacity:1;transform:rotate(20deg) scaleX(1)}55%{transform:rotate(32deg) scaleX(.85)}80%{opacity:1}100%{opacity:0;transform:rotate(45deg) scaleX(1.15);filter:blur(6px)}}@keyframes grWingR{0%{opacity:0;transform:rotate(-38deg) scaleX(.3)}25%{opacity:1;transform:rotate(-20deg) scaleX(1)}55%{transform:rotate(-32deg) scaleX(.85)}80%{opacity:1}100%{opacity:0;transform:rotate(-45deg) scaleX(1.15);filter:blur(6px)}}@keyframes grFlash{0%{opacity:0}10%{opacity:1}100%{opacity:0}}#grOv{position:fixed;inset:0;z-index:99995;pointer-events:none;display:flex;align-items:center;justify-content:center;background:rgba(0,40,18,.45)}#grOv .bx{position:relative;width:220px;height:220px;animation:grX 1.7s ease-out forwards}#grOv .b1,#grOv .b2{position:absolute;left:50%;top:50%;background:linear-gradient(180deg,#b6ffd0,#2fe97a);box-shadow:0 0 30px #2fe97a,0 0 80px rgba(47,233,122,.6);border-radius:6px}#grOv .b1{width:46px;height:220px;transform:translate(-50%,-50%)}#grOv .b2{width:220px;height:46px;transform:translate(-50%,-50%)}#grOv .dst{position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:50%;background:#7dffb4;box-shadow:0 0 8px #2fe97a;animation:grDust 1.5s ease-out forwards}#grWg{position:fixed;inset:0;z-index:99996;pointer-events:none;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(0,60,30,.5),rgba(0,20,10,.75))}#grWg .fl{position:relative;width:340px;height:220px}#grWg .wL,#grWg .wR{position:absolute;top:50%;width:170px;height:110px;background:linear-gradient(180deg,#fff,#dfffe9);border-radius:60% 40% 45% 55%/70% 60% 40% 30%;box-shadow:0 0 40px rgba(255,255,255,.9),0 0 100px rgba(120,255,180,.5);filter:blur(.5px)}#grWg .wL{left:0;transform-origin:right center;animation:grWingL 1.6s ease-out forwards}#grWg .wR{right:0;transform-origin:left center;animation:grWingR 1.6s ease-out forwards}#grWg .fl::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 24px #fff,0 0 60px rgba(255,255,255,.8);transform:translate(-50%,-50%);animation:grFlash 1.6s ease-out forwards}';
 document.head.appendChild(s);})();
-function grCross(){var o=document.createElement('div');o.id='grOv';var b=document.createElement('div');b.className='bx';b.innerHTML='<div class="b1"></div><div class="b2"></div>';o.appendChild(b);
-for(var i=0;i<26;i++){var d=document.createElement('div');d.className='dst';var a=Math.random()*Math.PI*2,r=90+Math.random()*160;d.style.setProperty('--dx',Math.cos(a)*r+'px');d.style.setProperty('--dy',Math.sin(a)*r+'px');d.style.animationDelay=(0.7+Math.random()*0.6)+'s';b.appendChild(d);}
-document.body.appendChild(o);setTimeout(function(){o.remove();},2400);}
 function grWings(){var o=document.createElement('div');o.id='grWg';o.innerHTML='<div class="fl"><div class="wL"></div><div class="wR"></div></div>';document.body.appendChild(o);setTimeout(function(){o.remove();},1700);}
 var SK='grey_empire_rpg_v4',BE=5,UC=25,UM=1.8,MC=0.20,GRC=10,GRH=2.5;
 function ldS(){try{var s=JSON.parse(localStorage.getItem(SK));if(s&&s.levels)return s;}catch(e){}return{levels:[1,1,1,1],xp:[0,0,0,0],maxWave:1};}
@@ -35,16 +33,17 @@ var GR={n:'Griffin',cl:'Медик-штурмовик',st:4,col:'#7cff9b',hp:110
 var MA=B64+'upload_6946a52090cc45fd92424c134cf41a7f.webp';
 var MT='https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galleon.mp3';
 var MP={ap:['Цель обнаружена. Отряд сопротивления — Grey Empire. Начинаю зачистку.','Протокол: найти и уничтожить все силы сопротивления. Приоритет — Grey Empire.','Сканирование завершено. Сопротивление будет ликвидировано.'],vul:['Залп назначен. Расчёт: уничтожение.','Пулемётная система активна. Цель захвачена.'],rkt:['Ракетный залп запущен. Поражение трёх целей.','Плотность огня максимальна. Сопротивление бесполезно.'],sh:['Укреплённый корпус активирован. Входящий урон снижен на 40%.','Броня перераспределена. Атаки Grey Empire признаны неэффективными.'],kl:['Фрагмент подтверждён. Сопротивление слабеет.','Единица сопротивления уничтожена. Следующая цель.'],df:['Критическое повреждение ядра… Сопротивление… недооценено…']};
-/* Озвучка: глобальный разблокировщик — после первого касания все Audio играют свободно */
+/* Озвучка: три попытки — если браузер заблокировал звук, он заиграет при первом касании */
 var sndUnlocked=false;
 document.addEventListener('pointerdown',function(){sndUnlocked=true;},{once:true});
 document.addEventListener('keydown',function(){sndUnlocked=true;},{once:true});
-function say(url,vol){try{var a=new Audio(url);a.volume=vol||0.6;a.currentTime=0;
-var p=a.play();
-if(p&&p.catch)p.catch(function(){
-if(!sndUnlocked){
-document.addEventListener('pointerdown',function(){a.currentTime=0;a.play().catch(function(){});},{once:true});
-}});}catch(e){}}
+function say(url,vol){try{
+var a=new Audio(url);a.volume=vol||0.6;a.preload='auto';a.load();
+var n=0;
+function go(){n++;a.currentTime=0;var p=a.play();
+if(p&&p.catch)p.catch(function(){if(n<3)document.addEventListener('pointerdown',go,{once:true});});}
+go();
+}catch(e){}}
 var mAu=null,mGl=null;
 function mOn(){if(!mGl){mGl=document.createElement('div');mGl.style.cssText='position:fixed;inset:0;z-index:99996;pointer-events:none;opacity:0;transition:opacity .3s linear;background:repeating-linear-gradient(0deg,rgba(255,40,70,.10) 0 2px,transparent 2px 5px),repeating-linear-gradient(90deg,rgba(150,50,255,.08) 0 3px,transparent 3px 7px)';mGl.innerHTML='<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:800;letter-spacing:6px;color:#ff2a46;text-shadow:0 0 18px rgba(255,40,70,.8),0 0 40px rgba(150,50,255,.6);font-size:clamp(22px,5vw,54px)">⚠ ATTENCION!</div>';document.body.appendChild(mGl);}mGl.style.opacity='1';}
 function mOff(){if(mGl)mGl.style.opacity='0';}
@@ -83,18 +82,14 @@ return L;}
 function arm(e,d){if(e&&e.mecha&&e.sh>0)return Math.max(1,Math.round(d*0.6));return d;}
 function mkB(){var l=blv();return{def:BL,idx:99,lv:l,hp:BL.hp+(l-1)*20,mx:BL.hp+(l-1)*20,atk:BL.atk+(l-1)*2.5,cr:BL.cr,cd2:BL.cd,ac:BL.ac,dd:BL.dd,act:false,uc:0,bell:true};}
 function mkG(){var l=blv();return{def:GR,idx:98,lv:l,hp:GR.hp+(l-1)*20,mx:GR.hp+(l-1)*20,atk:GR.atk+(l-1)*2.5,cr:GR.cr+GRC,cd2:GR.cd,ac:GR.ac,dd:GR.dd,act:false,uc:0,griffin:true,smCd:0,revUsed:false};}
-/* Bell ИЛИ Griffin: гость приходит с шансом 30%, кто именно — монетка 50/50 */
+/* Диспетчер гостей: общий шанс 30% на боссовой волне, монетка решает — Bell (старая логика) или класс Griffin */
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin;});
 if(st.wave>=5&&Math.random()<0.30){st.bA=true;
 if(Math.random()<0.5){var b=mkB();st.party.push(b);st.bJ=true;
 log('🔔 Из темноты появляется Bell... (ур.'+b.lv+')','#e8a0ff');
 say(BVO,0.55);
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell');if(c)window.animateBellAppear(c);},100);}}
-else{var g2=mkG();st.party.push(g2);st.gJ=true;
-grCross();
-log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g2.lv+')','#7cff9b');
-say(GVO,0.6);
-if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-griffin');if(c)window.animateBellAppear(c);},100);}}}}
+else{if(window.GriffinClass){window.GriffinClass.spawn(st);}else{var g2=mkG();st.party.push(g2);st.gJ=true;grCross();log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g2.lv+')','#7cff9b');say(GVO,0.6);}}}}
 function nb(k){var s=k?sv.maxWave:1;
 st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0};}),en:[],over:false,bA:false,bJ:false,gJ:false};
 st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;
@@ -357,6 +352,8 @@ document.addEventListener('pointerdown',function(){if(!o)b2();},{once:true});
 })();
 /* ===== Боевые реплики персонажей ===== */
 (function(){
+if(window.__GX_VOICE_LINES)return;
+window.__GX_VOICE_LINES=true;
 function init(){
 var HC={'N-04':'#dd4e60','Alisa':'#9fd18a','Crysta':'#7fb8d8','Sky':'#c9b8e8'};
 var HP={
@@ -377,6 +374,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 /* ===== Достижения: вкладка + эффект награды ===== */
 (function(){
+if(window.__GX_ACH)return;
+window.__GX_ACH=true;
 function ready(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',f);else f();}
 ready(function(){
 var KEY='grey_empire_achv';
@@ -405,23 +404,25 @@ function open(){var st2=load();
 var ov=document.createElement('div');
 ov.style.cssText='position:fixed;inset:0;z-index:99993;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.85);pointer-events:auto';
 var box=document.createElement('div');
-box.style.cssText='background:#0a0a0a;border:1px solid #e8c060;padding:28px 32px;max-width:420px;width:90%;text-align:center;font-family:inherit;color:#ddd';
+box.style.cssText='background:#0a0a0a;border:1px solid #e8c060;padding:28px 32px;max-width:420px;width:90%;text-align:center;font-family:inherit;color:#ddd;max-height:80vh;overflow-y:auto';
 var h=document.createElement('div');h.textContent='🏆 Достижения';h.style.cssText='color:#e8c060;font-size:20px;font-weight:700;letter-spacing:2px;margin-bottom:18px';box.appendChild(h);
 ACH.forEach(function(a){var got=!!st2[a.id];
 var row=document.createElement('div');row.style.cssText='padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);text-align:left';
 row.innerHTML='<div style="font-weight:700;color:'+(got?'#e8c060':'#666')+'">'+(got?'★ ':'☆ ')+a.n+'</div><div style="font-size:12px;color:#999;margin-top:3px">'+(got?a.d:'??? — '+a.d)+'</div>';
 box.appendChild(row);});
-var cl=document.createElement('button');cl.textContent='Закрыть';
+var cl=document.createElement('button');cl.textContent='Закрыть';cl.type='button';
 cl.style.cssText='margin-top:18px;padding:8px 26px;background:transparent;border:1px solid #e8c060;color:#e8c060;cursor:pointer;border-radius:8px;font-family:inherit;font-size:14px';
-cl.onclick=function(){ov.remove();};box.appendChild(cl);
+cl.addEventListener('click',function(e){e.stopPropagation();ov.remove();});
+box.appendChild(cl);
 ov.appendChild(box);document.body.appendChild(ov);
 ov.addEventListener('click',function(e){if(e.target===ov)ov.remove();});}
+window.achOpen=open;
 var iv=setInterval(function(){
 var btn=document.getElementById('ach-tab-btn');
 var w=document.getElementById('vrpg3-wave');
 if(!btn||!w)return;
 clearInterval(iv);
-btn.onclick=open;
+btn.addEventListener('click',function(e){e.stopPropagation();open();});
 var prev=w.textContent.trim();
 new MutationObserver(function(){var cur=w.textContent.trim();
 var c=parseInt(cur,10),p=parseInt(prev,10);
@@ -433,4 +434,35 @@ if(cleared>=5)grant('ach2');}}
 prev=cur;}).observe(w,{childList:true,characterData:true,subtree:true});
 },300);
 });
+})();
+/* ===== КЛАСС GRIFFIN: самостоятельный модуль появления, эффектов и озвучки ===== */
+(function(){
+function ready(f){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',f);else f();}
+var GriffinClass={
+	name:'Griffin',
+	vo:'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%93%D1%80%D0%B8%D1%84%D0%B8%D0%BD%20(mp3cut.net).mp3',
+	au:null,
+	say:function(vol){try{
+		if(!this.au){this.au=new Audio(this.vo);this.au.volume=vol||0.6;this.au.preload='auto';this.au.load();}
+		var self=this,n=0;
+		function go(){n++;self.au.currentTime=0;var p=self.au.play();
+		if(p&&p.catch)p.catch(function(){if(n<3)document.addEventListener('pointerdown',go,{once:true});});}
+		go();
+	}catch(e){}},
+	cross:function(){var o=document.createElement('div');o.id='grOv';var b=document.createElement('div');b.className='bx';b.innerHTML='<div class="b1"></div><div class="b2"></div>';o.appendChild(b);
+	for(var i=0;i<26;i++){var d=document.createElement('div');d.className='dst';var a=Math.random()*Math.PI*2,r=90+Math.random()*160;d.style.setProperty('--dx',Math.cos(a)*r+'px');d.style.setProperty('--dy',Math.sin(a)*r+'px');d.style.animationDelay=(0.7+Math.random()*0.6)+'s';b.appendChild(d);}
+	document.body.appendChild(o);setTimeout(function(){o.remove();},2400);},
+	spawn:function(st){
+		try{
+			var g=mkG();st.party.push(g);st.gJ=true;
+			this.cross();
+			this.say(0.6);
+			log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g.lv+')','#7cff9b');
+			if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-griffin');if(c)window.animateBellAppear(c);},150);}
+		}catch(e){
+			try{var g2=mkG();st.party.push(g2);st.gJ=true;log('✚ Griffin вступает в бой!','#7cff9b');say(GVO,0.6);}catch(e2){}
+		}
+	}
+};
+window.GriffinClass=GriffinClass;
 })();
