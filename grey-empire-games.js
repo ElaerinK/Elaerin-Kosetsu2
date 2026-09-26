@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v12.7: звёзды за уровни у всех, без звёзд редкости, звёзды всегда из уровня */
+/* Хроники Grey Empire v12.8: v12.7 + новое приветствие MECHA-GALLEON v2 */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -19,7 +19,7 @@ GX.BVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%9
 GX.GVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%93%D1%80%D0%B8%D1%84%D0%B8%D0%BD%20(mp3cut.net).mp3';
 GX.GV  = GX.B64+'upload_3045498d06f44f7bb56d49f5ff147cb8.mp4';
 GX.MA  = GX.B64+'upload_6946a52090cc45fd92424c134cf41a7f.webp';
-GX.MT  = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galleon.mp3';
+GX.MT  = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galeon%20v2.mp3';
 
 var B64=GX.B64, PR=GX.PR, BA=GX.BA, GA=GX.GA, BVO=GX.BVO, GVO=GX.GVO, GV=GX.GV, MA=GX.MA, MT=GX.MT;
 
@@ -81,13 +81,11 @@ function sfx(t){var a=A();if(!a)return;if(a.state==='suspended')a.resume();var o
 
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function xn(l){return 35+(l-1)*28;}
-/* ЗВЁЗДЫ: 1★ за каждые 10 уровней (до 3★) — общая система для героев И гостей */
 function starsOf(l){return Math.min(3,Math.floor((l-1)/10));}
 function starMul(s){return s<=0?1:(s===1?1.5:(s===2?2:2.5));}
 function hs(i){var l=sv.levels[i],h=HR[i],s=starsOf(l),m=starMul(s);
 return{hp:Math.round(h.hp*m)+(l-1)*20,atk:Math.round(h.atk*m*10)/10+(l-1)*2.5,cr:h.cr+Math.floor((l-1)*0.8),cd:h.cd,ac:h.ac,dd:h.dd};}
 function blv(){return Math.max(sv.levels[0],sv.levels[1],sv.levels[2],sv.levels[3])+2;}
-/* Правильный уровень персонажа: гость — свой, герой — из сохранённого прогресса */
 function lvlOf(h){return h.bell||h.griffin?h.lv:sv.levels[h.idx];}
 function log(m,c){var d=document.createElement('div');d.textContent=m;if(c)d.style.color=c;lg.appendChild(d);lg.scrollTop=lg.scrollHeight;}
 function isB(w){return w%BE===0;}
@@ -152,7 +150,7 @@ nb(true);
 (function(){
 if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
 try{if(window.gxBackgroundAudio&&window.gxBackgroundAudio.el){try{window.gxBackgroundAudio.el.pause();}catch(e){}}}catch(e){}
-var a=new Audio('https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Elaerin-Kosetsu-Prolog-_%CE%B2_.mp3');
+var a=new Audio('https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Elaerin-Kosetsu-Prolog-_%CE%B1_.mp3');
 a.loop=true;a.volume=0.35;a.preload='auto';
 window.gxBackgroundAudio={el:a,baseVolume:0.35,duckTo:function(v){a.volume=v;},restore:function(){a.volume=this.baseVolume;}};
 var on=false;
