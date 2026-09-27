@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v12.9: бонусы опыта за убийства + бафы ивента в боевой математике */
+/* Хроники Grey Empire v13.0: опыт +100% за врага / +500% за босса, бафы ивента, звёзды, окантовки */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -71,7 +71,7 @@ function mX(){if(mAu){mAu.pause();mAu.currentTime=0;}try{var b=window.gxBackgrou
 function grVid(){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99997;display:flex;align-items:center;justify-content:center;background:rgba(0,10,4,.92)';var v=document.createElement('video');v.src=GV;v.muted=false;v.playsInline=true;v.setAttribute('playsinline','');v.autoplay=true;v.style.cssText='max-width:100%;max-height:100%;object-fit:contain';o.appendChild(v);document.body.appendChild(o);grWings();var done=false;function end(){if(done)return;done=true;try{v.pause();}catch(e){}o.remove();}v.addEventListener('ended',end);v.addEventListener('error',end);setTimeout(end,9000);var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;v.play().catch(function(){});});}
 
 var sv=ldS(),st=null,sel=null,tg=null,busy=false;
-var __gxKill=null; /* кто совершил последнее убийство: {idx,boss} */
+var __gxKill=null;
 var pc=$('vrpg3-particles'),px=pc?pc.getContext('2d'):null,pp=[];
 function rz(){var b=$('vrpg3-board');if(!b||!pc)return;pc.width=b.offsetWidth;pc.height=b.offsetHeight;}
 window.addEventListener('resize',rz);setTimeout(rz,80);
@@ -117,19 +117,16 @@ pt.appendChild(c);});var h=sel!==null?st.party.find(function(p){return p.idx===s
 
 function fl(e,t,c,crit){var f=document.createElement('div');f.className='gx3-dmg-float'+(crit?' gx3-crit':'');f.style.color=c;f.textContent=t;e.appendChild(f);setTimeout(function(){f.remove();},900);}
 function hitQ(a,dd){return Math.random()*100<Math.max(8,Math.min(95,a-dd*0.5));}
-/* КРИТ: баф ивента +20 к шансу */
 function dmg(b,c,cm){var d=b,crit=Math.random()*100<(c+(gxBuff()==='critd'?20:0));if(crit)d=Math.round(d*(cm/100));return{d:d,crit:crit};}
-/* УРОН: баф ивента +30% к базе */
 function bdmg(base){return gxBuff()==='dmg'?Math.round(base*1.3):base;}
-/* ЛЕЧЕНИЕ: баф ивента +50% */
 function bheal(v){return gxBuff()==='heal'?Math.round(v*1.5):v;}
 function ucr(){return Math.random()*100<UC;}
-/* УБИЙСТВО: бонус опыта убийце (+20% за врага, +100% за босса) */
+/* УБИЙСТВО: +100% за врага, +500% за босса — мгновенно убийце */
 function kill(e){e.hp=0;e.al=false;
 if(__gxKill&&__gxKill.idx>=0&&__gxKill.idx<4){
-var bonus=__gxKill.boss?3:0.6;
+var bonus=__gxKill.boss?15:3;
 sv.xp[__gxKill.idx]+=bonus;
-log('★ '+HR[__gxKill.idx].n+' получает бонус опыта +'+(__gxKill.boss?'100%':'20%')+' за убийство!',__gxKill.boss?'#ffd700':'#9fd18a');
+log('★ '+HR[__gxKill.idx].n+' получает бонус опыта +'+(__gxKill.boss?'500%':'100%')+' за убийство!',__gxKill.boss?'#ffd700':'#9fd18a');
 __gxKill=null;
 }
 if(e.mecha)log('MECHA-GALLEON: '+pk(MP.df,'mdf'),'#c08bff');}
