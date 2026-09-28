@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v18.5: syncParty (сверка показателей после волны), рост +30HP/+4ATK/+1%крит/+2%крит-урон, крит на ульты, осколки смерти, затемнение походивших */
+/* Хроники Grey Empire v18.6: +5% отхил/уровень для Alisa и Griffin, syncParty (сверка после волны), рост +30HP/+4ATK/+1%крит/+2%крит-урон, крит на ульты, осколки смерти, затемнение походивших */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -127,6 +127,15 @@ if(!isFinite(p.hp))p.hp=0;
 if(p.hp<0)p.hp=0;
 if(p.hp>p.mx)p.hp=p.mx;
 }
+/* +5% ОТХИЛ ЗА УРОВЕНЬ: Alisa и Griffin */
+function healBonusOf(p){try{
+if(!p||p.hp<=0)return 0;
+if(p.griffin)return ((p.lv||1)-1)*5;
+if(p.def&&p.def.n==='Alisa'&&!p.bell&&!p.griffin&&!p.rey)return ((sv.levels[p.idx]||1)-1)*5;
+return 0;
+}catch(e){return 0;}}
+function maxHealBonus(){var m=0;try{st.party.forEach(function(p){m=Math.max(m,healBonusOf(p));});}catch(e){}return m;}
+function bheal(v){var m=1;if(gxBuff()==='heal')m*=1.5;return Math.round(v*m*(1+maxHealBonus()/100));}
 /* СВЕРХКА ПОКАЗАТЕЛЕЙ ПОСЛЕ ВОЛНЫ: приводим карточки к формулам уровня/звёзд, сохраняя долю здоровья */
 function syncParty(){
 try{
@@ -136,6 +145,7 @@ var x=hs(i);
 fixHp(p);
 var frac=(p.hp>0&&p.mx>0)?(p.hp/p.mx):(p.hp>0?1:0);
 p.mx=x.hp;p.atk=x.atk;p.cr=x.cr;p.cd2=x.cd;
+p.healB=healBonusOf(p);
 if(p.hp>0){p.hp=Math.max(1,Math.round(x.hp*Math.min(1,frac)));}
 else p.hp=0;
 });
@@ -153,13 +163,13 @@ function grCrossFallback(){var o=document.createElement('div');o.style.cssText='
 
 var __gxGuestsSinceGriffin=0;
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});if(st.wave>=5&&Math.random()<0.30){st.bA=true;var forceG=(__gxGuestsSinceGriffin>=3);var roll=Math.random();
-if(forceG||roll<0.34){var g=mkG();st.party.push(g);__gxGuestsSinceGriffin=0;st.gJ=true;log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g.lv+')','#7cff9b');try{if(window.GriffinClass){window.GriffinClass.cross();window.GriffinClass.say(0.6);}else{grCrossFallback();say(GVO,0.6);}}catch(e){grCrossFallback();say(GVO,0.6);}
+if(forceG||roll<0.34){var g=mkG();st.party.push(g);__gxGuestsSinceGriffin=0;st.gJ=true;log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g.lv+', +5% отхил/ур.)','#7cff9b');try{if(window.GriffinClass){window.GriffinClass.cross();window.GriffinClass.say(0.6);}else{grCrossFallback();say(GVO,0.6);}}catch(e){grCrossFallback();say(GVO,0.6);}
 }else if(roll<0.67){var guest=mkB();__gxGuestsSinceGriffin++;st.bJ=true;log('🔔 Из темноты появляется Bell... (ур.'+guest.lv+')','#e8a0ff');say(BVO,0.55);st.party.push(guest);
 }else{var r=mkHeit();st.party.push(r);__gxGuestsSinceGriffin++;st.rJ=true;log('🛸 Из потоков данных материализуется Хейт! (ур.'+r.lv+')','#7ac3f0');
 }
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell,.gx3-griffin,.gx3-rey');if(c)window.animateBellAppear(c);},150);}}}
 
-function nb(k){var s=k?sv.maxWave:1;st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0,reyDmg:0,skCd:0,crB:0,shSt:0,dodge:0,crit100:0,regen:0};}),en:[],over:false,bA:false,bJ:false,gJ:false,rJ:false,firstDeath:false};st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;if(m0)mE2();tryB();sel=tg=null;busy=false;lg.innerHTML='';rs.classList.add('hidden');if(!m0){if(isB(st.wave))log('⚠ БОСС! Ядро Apofis!','#e8c060');else log('Волна '+st.wave,'#e8c060');}rd();}
+function nb(k){var s=k?sv.maxWave:1;st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0,reyDmg:0,skCd:0,crB:0,shSt:0,dodge:0,crit100:0,regen:0,healB:0};}),en:[],over:false,bA:false,bJ:false,gJ:false,rJ:false,firstDeath:false};st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;if(m0)mE2();tryB();sel=tg=null;busy=false;lg.innerHTML='';rs.classList.add('hidden');if(!m0){if(isB(st.wave))log('⚠ БОСС! Ядро Apofis!','#e8c060');else log('Волна '+st.wave,'#e8c060');}rd();}
 function aE(){return st.en.filter(function(e){return e.al;});}
 function aH(){return st.party.filter(function(h){return h.hp>0;});}
 
@@ -170,7 +180,7 @@ var cls='gx3-card'+(sel===h.idx?' gx3-selected':'')+(h.hp<=0?' gx3-dead':'')+(h.
 if(sc===1)cls+=' gx3-star1';else if(sc===2)cls+=' gx3-star2';else if(sc===3)cls+=' gx3-star3';
 var c=document.createElement('div');c.className=cls;c.dataset.uid=h.idx;var p=Math.max(0,Math.round(h.hp/h.mx*100));
 var imgHtml;if(h.bell){imgHtml='<div class="gx3-card-img" style="position:relative;padding:0;background:#0a0a0a"><img src="'+BA+'" alt="Bell" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"><span style="position:absolute;top:2px;right:2px;font-size:16px;line-height:1;background:rgba(0,0,0,.65);border-radius:4px;padding:2px 4px;color:#e8a0ff">🔔</span></div>';}else if(h.griffin){imgHtml='<div class="gx3-card-img" style="position:relative;padding:0;background:#0a0a0a"><img src="'+GA+'" alt="Griffin" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"><span style="position:absolute;top:2px;right:2px;font-size:16px;line-height:1;background:rgba(0,0,0,.65);border-radius:4px;padding:2px 4px;color:#7cff9b">✚</span></div>';}else if(h.rey){imgHtml='<div class="gx3-card-img" style="position:relative;padding:0;background:#0a0a0a"><img src="'+RA+'" alt="Хейт" style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block"><span style="position:absolute;top:2px;right:2px;font-size:16px;line-height:1;background:rgba(0,0,0,.65);border-radius:4px;padding:2px 4px;color:#7ac3f0">🛸</span></div>';}else{imgHtml='<div class="gx3-card-img" style="position:relative;padding:0;background:#0a0a0a"><img src="'+PR[h.idx]+'" alt="'+h.def.n+'" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block"><span style="position:absolute;top:2px;right:2px;font-size:16px;line-height:1;background:rgba(0,0,0,.65);border-radius:4px;padding:2px 4px;color:'+h.def.col+'">'+h.def.img+'</span></div>';}
-var fx='';if(h.reyDmg>0)fx+='<span class="gxf-ico2" title="Поддержка">🔥</span>';if(h.crB>0)fx+='<span class="gxf-ico2" title="Меткий">🎯</span>';if(h.shSt>0)fx+='<span class="gxf-ico2" title="Тень ×'+h.shSt+'">🌑'+h.shSt+'</span>';if(h.dodge>0)fx+='<span class="gxf-ico" title="Уклонение">🪶</span>';if(h.crit100>0)fx+='<span class="gxf-ico2" title="100% крит">✦</span>';if(h.regen>0)fx+='<span class="gxf-ico" title="Тик-лечение">✚</span>';
+var fx='';if(h.reyDmg>0)fx+='<span class="gxf-ico2" title="Поддержка">🔥</span>';if(h.crB>0)fx+='<span class="gxf-ico2" title="Меткий">🎯</span>';if(h.shSt>0)fx+='<span class="gxf-ico2" title="Тень ×'+h.shSt+'">🌑'+h.shSt+'</span>';if(h.dodge>0)fx+='<span class="gxf-ico" title="Уклонение">🪶</span>';if(h.crit100>0)fx+='<span class="gxf-ico2" title="100% крит">✦</span>';if(h.regen>0)fx+='<span class="gxf-ico" title="Тик-лечение">✚</span>';if(h.healB>0)fx+='<span class="gxf-ico2" title="Отхил +'+h.healB+'%">✚'+h.healB+'%</span>';
 c.innerHTML=imgHtml+fx+'<div class="gx3-card-body"><div class="gx3-card-name" style="color:'+h.def.col+'">'+h.def.n+'</div><div class="gx3-card-meta">'+h.def.cl+' · ур.'+lvlOf(h)+(sc>0?' · <span style="color:#ffd700;text-shadow:0 0 6px rgba(255,215,0,.7)">'+'★'.repeat(sc)+'</span>':'')+'</div><div class="gx3-hp-bar"><div class="gx3-hp-fill" style="width:'+p+'%;background:'+h.def.col+'"></div></div><div class="gx3-hp-text">'+Math.max(0,Math.round(h.hp))+'/'+Math.round(h.mx)+'</div></div>';
 pt.appendChild(c);});var h=sel!==null?st.party.find(function(p){return p.idx===sel;}):null;if(!h||h.hp<=0||h.act||st.over){ac2.innerHTML='<div class="text-[13px] text-white/40">'+(st.over?'':(h&&h.act?'Герой уже ходил':'Выберите героя'))+'</div>';}else{ac2.innerHTML=h.def.acts.map(function(a){var d=false,x='';if(a.k==='ult'){if(h.bell){if(h.lv<(h.def.ult.un||5)){d=true;x=' (с 5 ур.)';}else if(h.uc>0){d=true;x=' ('+h.uc+')';}}else if(h.griffin){if(h.revUsed){d=true;x=' (исп.)';}}else if(h.rey){if(h.uc>0){d=true;x=' ('+h.uc+')';}}else{if(sv.levels[h.idx]<(h.def.ult.un||5)){d=true;x=' (с 5 ур.)';}else if(h.uc>0){d=true;x=' ('+h.uc+')';}}}if(a.k==='smoke'&&h.smCd>0){d=true;x=' ('+h.smCd+')';}if(a.k==='reybuff'&&h.reyCd>0){d=true;x=' ('+h.reyCd+')';}if(a.k==='reyvirus'&&h.virCd>0){d=true;x=' ('+h.virCd+')';}if(a.k==='skill'&&h.skCd>0){d=true;x=' ('+h.skCd+')';}return '<button class="gx3-btn-act" data-act="'+a.k+'"'+(d?' disabled':'')+' style="border-color:'+h.def.col+'">'+a.l+x+'<small>'+a.d+'</small></button>';}).join('');}}
 
@@ -179,7 +189,7 @@ function healFx(h,v){try{var c=pt.querySelector('[data-uid="'+h.idx+'"]');if(c){
 function hitQ(a,dd){return Math.random()*100<Math.max(8,Math.min(95,a-dd*0.5));}
 function dmg(b,c,cm){var d=b,crit=Math.random()*100<(c+(gxBuff()==='critd'?20:0));if(crit)d=Math.round(d*(cm/100));return{d:d,crit:crit};}
 function bdmg(base){return gxBuff()==='dmg'?Math.round(base*1.3):base;}
-function bheal(v){return gxBuff()==='heal'?Math.round(v*1.5):v;}
+function bheal(v){var m=1;if(gxBuff()==='heal')m*=1.5;return Math.round(v*m*(1+maxHealBonus()/100));}
 function ucr(){return Math.random()*100<UC;}
 function kill(e){e.hp=0;e.al=false;
 var el=en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]');
@@ -287,7 +297,8 @@ var e6c=en.querySelector('[data-eid="'+st.en.indexOf(t)+'"]');
 if(e6c){fl(e6c,'−'+d6,h.def.col,r4.crit);if(window.animateShake)window.animateShake(e6c);}
 log('💥 Раскол! '+t.n+' получает уязвимость: +30% урона по ней (2 хода)','#dd4e60');
 if(t.hp<=0){__gxKill={idx:h.idx,boss:!!t.boss};kill(t);}}
-else if(h.def.n==='Crysta'){h.skCd=4;
+else if(h.def.n==='Crysta'){/* СТАН: урон по 2 целям + пропуск 2 ходов, КД 4; боссы — 10% шанс */
+h.skCd=4;
 if(!al.length){log('Нет целей');return;}
 var tsS=al.slice(0,2);log('💫 Стан! Crysta бьёт '+tsS.length+' цели','#7fb8d8');
 tsS.forEach(function(e2){var r5=dmg(heroBase(h,0,4),heroCrit(h),h.cd2);var d7=dmgTo(e2,arm(e2,r5.d));e2.hp-=d7;
@@ -298,13 +309,14 @@ if(e2.boss){if(Math.random()<0.10){e2.stun=2;log('💫 РЕДКИЙ УДАР! '+
 else{e2.stun=2;log('💫 '+e2.n+' оглушён: пропустит 2 хода','#7fb8d8');}
 }
 if(e2.hp<=0){__gxKill={idx:h.idx,boss:!!e2.boss};kill(e2);}});}
-else{var r4c=dmg(skyStrike(h,3,9),heroCrit(h),h.cd2);
+else{/* Sky: удар с тратой теней */
+var r4c=dmg(skyStrike(h,3,9),heroCrit(h),h.cd2);
 var d6c=dmgTo(t,arm(t,r4c.d));t.hp-=d6c;var e6b=en.querySelector('[data-eid="'+st.en.indexOf(t)+'"]');if(e6b)fl(e6b,'−'+d6c,h.def.col,r4c.crit);log(h.def.n+' навык → '+t.n+': −'+d6c+(t.mecha&&t.sh>0?' (щит)':''),h.def.col);if(t.hp<=0){__gxKill={idx:h.idx,boss:!!t.boss};kill(t);}}}
 if(h.smCd>0)h.smCd--;if(h.reyCd>0)h.reyCd--;if(h.virCd>0)h.virCd--;
 h.act=true;sel=null;tg=null;
 var prevStars=st.party.map(function(p){return starsOf(lvlOf(p));});
-st.party.forEach(function(p){if(p.hp>0&&!p.bell&&!p.griffin&&!p.rey){var i=p.idx;if(i<0||i>=4)return;sv.xp[i]+=3;while(sv.xp[i]>=xn(sv.levels[i])){sv.xp[i]-=xn(sv.levels[i]);sv.levels[i]++;sfx('level');log('★ '+HR[i].n+' достиг ур. '+sv.levels[i]+'!','#e8c060');
-var ns2=starsOf(sv.levels[i]);if(ns2>prevStars[i]){p.mx=Math.round(HR[i].hp*starMul(ns2))+(sv.levels[i]-1)*30;p.hp=p.mx;p.atk=Math.round(HR[i].atk*starMul(ns2)*10)/10+(sv.levels[i]-1)*4;p.cd2=HR[i].cd+(sv.levels[i]-1)*2;log('✦ '+HR[i].n+' получает '+ns2+'★! Характеристики ×'+starMul(ns2),'#ffd700');}}}});
+st.party.forEach(function(p){if(p.hp>0&&!p.bell&&!p.griffin&&!p.rey){var i=p.idx;if(i<0||i>=4)return;sv.xp[i]+=3;while(sv.xp[i]>=xn(sv.levels[i])){sv.xp[i]-=xn(sv.levels[i]);sv.levels[i]++;sfx('level');log('★ '+HR[i].n+' достиг ур. '+sv.levels[i]+'!'+(i===1?' (+5% отхил!)':''),'#e8c060');
+var ns2=starsOf(sv.levels[i]);if(ns2>prevStars[i]){p.mx=Math.round(HR[i].hp*starMul(ns2))+(sv.levels[i]-1)*30;p.hp=p.mx;p.atk=Math.round(HR[i].atk*starMul(ns2)*10)/10+(sv.levels[i]-1)*4;p.cd2=HR[i].cd+(sv.levels[i]-1)*2;p.healB=healBonusOf(p);log('✦ '+HR[i].n+' получает '+ns2+'★! Характеристики ×'+starMul(ns2),'#ffd700');}}}});
 pr();if(!aE().length){rd();setTimeout(wc,700);return;}if(lose())return;var left=st.party.filter(function(p){return p.hp>0&&!p.act;});if(left.length===0){busy=true;rd();setTimeout(et,850);}else rd();});
 
 function wc(){log('Волна '+st.wave+' зачищена!','#e8c060');mX();try{var AK='grey_empire_achv',AS=JSON.parse(localStorage.getItem(AK)||'{}');var cleared=st.wave;if(cleared>=1&&!AS.ach1){AS.ach1=true;if(typeof window.showAch==='function')window.showAch({n:'Новичок на поле боя!',d:'Пройдена первая волна'});}if(cleared>=5&&!AS.ach2){AS.ach2=true;if(typeof window.showAch==='function')window.showAch({n:'Рядовой вояка!',d:'Пройдено пять волн'});}AS.maxCleared=Math.max(AS.maxCleared||0,cleared);localStorage.setItem(AK,JSON.stringify(AS));}catch(e){}if(st.bA){log('Гость растворяется в тени...','#e8a0ff');}st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});st.bA=false;sv.maxWave=Math.max(sv.maxWave,st.wave+1);pr();st.wave++;st.en=mkE();var m1=st.en[0]&&st.en[0].mecha;if(m1)mE2();st.party.forEach(function(p){fixHp(p);var lv=sv.levels[p.idx]||1;if(p.hp>0&&isFinite(p.hp)){p.hp=Math.min(p.mx,p.hp+16+lv*2);p.act=false;p.dgB=0;p.reyDmg=0;p.skCd=0;p.crB=0;p.dodge=0;p.crit100=0;p.regen=0;}});syncParty();tryB();if(!m1&&isB(st.wave))log('⚠ Приближается БОСС!','#e8c060');rd();busy=true;setTimeout(et,1100);}
