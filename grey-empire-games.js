@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v16.5: санитизация сохранения (фикс проседания HP), Тень Sky бьёт+копит, Хейт без дубля, 3 трека последовательно */
+/* Хроники Grey Empire v16.6: музыка перенесена на сайт (плейлист без дублей), санитизация HP, все навыки и гости */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -118,7 +118,8 @@ var __gxGuestsSinceGriffin=0;
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});if(st.wave>=5&&Math.random()<0.30){st.bA=true;var forceG=(__gxGuestsSinceGriffin>=3);var roll=Math.random();
 if(forceG||roll<0.34){var g=mkG();st.party.push(g);__gxGuestsSinceGriffin=0;st.gJ=true;log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g.lv+')','#7cff9b');try{if(window.GriffinClass){window.GriffinClass.cross();window.GriffinClass.say(0.6);}else{grCrossFallback();say(GVO,0.6);}}catch(e){grCrossFallback();say(GVO,0.6);}
 }else if(roll<0.67){var guest=mkB();__gxGuestsSinceGriffin++;st.bJ=true;log('🔔 Из темноты появляется Bell... (ур.'+guest.lv+')','#e8a0ff');say(BVO,0.55);st.party.push(guest);
-}else{var r=mkHeit();st.party.push(r);__gxGuestsSinceGriffin++;st.rJ=true;log('🛸 Из потоков данных материализуется Хейт! (ур.'+r.lv+')','#7ac3f0');
+}else{/* Хейт: приветствие играет со слоя сайта — без дубля */
+var r=mkHeit();st.party.push(r);__gxGuestsSinceGriffin++;st.rJ=true;log('🛸 Из потоков данных материализуется Хейт! (ур.'+r.lv+')','#7ac3f0');
 }
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell,.gx3-griffin,.gx3-rey');if(c)window.animateBellAppear(c);},150);}}}
 
@@ -233,36 +234,8 @@ nb(true);
 } /* end if(wv) */
 
 
-/* ========== МУЗЫКА: 3 трека, последовательное чередование ========== */
-(function(){
-if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-try{if(window.gxBackgroundAudio&&window.gxBackgroundAudio.el){try{window.gxBackgroundAudio.el.pause();}catch(e){}}}catch(e){}
-var TRACKS=['https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Elaerin-Kosetsu-Prolog-_%CE%B1_.mp3','https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20Ost%20mein%20menu.mp3','https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20Ost%20mein%20menu%20(2).mp3'];
-var TKI=0;
-try{TKI=(parseInt(localStorage.getItem('gx_track_idx')||'0',10)||0)%TRACKS.length;localStorage.setItem('gx_track_idx',String((TKI+1)%TRACKS.length));}catch(e){TKI=0;}
-var a=new Audio(TRACKS[TKI]);
-a.loop=true;a.volume=0.35;a.preload='auto';
-window.gxBackgroundAudio={el:a,baseVolume:0.35,duckTo:function(v){a.volume=v;},restore:function(){a.volume=this.baseVolume;}};
-var on=false;
-var b=document.getElementById('gx-sound-toggle');
-if(!b){
-  b=document.createElement('button');
-  b.id='gx-sound-toggle';
-  b.setAttribute('aria-label','Звук вкл/выкл');
-  b.textContent='🔇';
-  b.style.cssText='position:fixed;bottom:20px;right:20px;z-index:99990;width:48px;height:48px;border-radius:50%;border:2px solid #e8c060;background:rgba(0,0,0,.8);color:#e8c060;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(232,192,96,.45);transition:transform .15s;';
-  document.body.appendChild(b);
-}
-function r(){b.textContent=on?'🔊':'🔇';b.classList.toggle('on',on);}
-r();
-b.onclick=function(e){e.stopPropagation();on=!on;window.gxSoundMuted=!on;if(on)a.play().catch(function(){});else a.pause();r();};
-function unlock(){if(on)return;on=true;window.gxSoundMuted=false;a.play().catch(function(){});r();}
-document.addEventListener('click',unlock,{once:true});
-document.addEventListener('pointerdown',unlock,{once:true});
-document.addEventListener('keydown',unlock,{once:true});
-var cx=null;function t(){try{if(!cx)cx=new(window.AudioContext||window.webkitAudioContext)();if(cx.state==='suspended')cx.resume();var o=cx.createOscillator(),g=cx.createGain();o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(0.0001,cx.currentTime);g.gain.exponentialRampToValueAtTime(0.03,cx.currentTime+0.01);g.gain.exponentialRampToValueAtTime(0.0001,cx.currentTime+0.12);o.connect(g);g.connect(cx.destination);o.start();o.stop(cx.currentTime+0.14);}catch(e){}}
-document.addEventListener('mouseover',function(e){if(!on)return;if(e.target.closest('a, button'))t();});
-})();
+/* Музыка сайта полностью переехала на слой сайта (плейлист 3 треков друг за другом).
+   Здесь её нет — дубли плееров исключены по построению. */
 
 
 /* ========== ПОПАПЫ ПЕРСОНАЖЕЙ ========== */
