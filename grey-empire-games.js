@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v16.4: фикс порчи HP при смерти карточки (гостевые индексы), Тень Sky бьёт+копит, Хейт без дубля приветствия */
+/* Хроники Grey Empire v16.5: санитизация сохранения (фикс проседания HP), Тень Sky бьёт+копит, Хейт без дубля, 3 трека последовательно */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -75,6 +75,8 @@ function mX(){if(mAu){mAu.pause();mAu.currentTime=0;}try{var b=window.gxBackgrou
 function grVid(){var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99997;display:flex;align-items:center;justify-content:center;background:rgba(0,10,4,.92)';var v=document.createElement('video');v.src=GV;v.muted=false;v.playsInline=true;v.setAttribute('playsinline','');v.autoplay=true;v.style.cssText='max-width:100%;max-height:100%;object-fit:contain';o.appendChild(v);document.body.appendChild(o);grWings();var done=false;function end(){if(done)return;done=true;try{v.pause();}catch(e){}o.remove();}v.addEventListener('ended',end);v.addEventListener('error',end);setTimeout(end,9000);var p=v.play();if(p&&p.catch)p.catch(function(){v.muted=true;v.play().catch(function(){});});}
 
 var sv=ldS(),st=null,sel=null,tg=null,busy=false;
+/* Санизация сохранения: чиним сбойные уровни/опыт/волну от старых багов */
+(function(){var bad=false;for(var i=0;i<4;i++){if(typeof sv.levels[i]!=='number'||!isFinite(sv.levels[i])||sv.levels[i]<1){sv.levels[i]=1;bad=true;}if(typeof sv.xp[i]!=='number'||!isFinite(sv.xp[i])||sv.xp[i]<0){sv.xp[i]=0;bad=true;}}if(typeof sv.maxWave!=='number'||!isFinite(sv.maxWave)||sv.maxWave<1){sv.maxWave=1;bad=true;}if(bad){try{localStorage.setItem(SK,JSON.stringify(sv));}catch(e){}}})();
 var __gxKill=null;
 var pc=$('vrpg3-particles'),px=pc?pc.getContext('2d'):null,pp=[];
 function rz(){var b=$('vrpg3-board');if(!b||!pc)return;pc.width=b.offsetWidth;pc.height=b.offsetHeight;}
@@ -95,7 +97,6 @@ function hs(i){var l=sv.levels[i],h=HR[i],s=starsOf(l),m=starMul(s);
 return{hp:Math.round(h.hp*m)+(l-1)*20,atk:Math.round(h.atk*m*10)/10+(l-1)*2.5,cr:h.cr+Math.floor((l-1)*0.8),cd:h.cd,ac:h.ac,dd:h.dd};}
 function blv(){return Math.max(sv.levels[0],sv.levels[1],sv.levels[2],sv.levels[3])+2;}
 function lvlOf(h){return h.bell||h.griffin||h.rey?h.lv:sv.levels[h.idx];}
-/* ФИКС ПОРЧИ HP: любое здоровье нормализуется перед отображением/расчётом */
 function fixHp(p){
 if(!p)return;
 if(!isFinite(p.mx)||p.mx<=0)p.mx=Math.max(1,Math.round(p.mx)||1);
