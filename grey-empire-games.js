@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v16.2: Хейт с полным набором реплик, раздельные КД, Тень Sky с крит-бонусом */
+/* Хроники Grey Empire v16.3: Тень Sky бьёт и копит стаки, приветствие Хейт без дубля */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -17,12 +17,11 @@ GX.GA  = GX.B64+'upload_7ac7c714935b45059cd05df5e1672314.webp';
 GX.RA  = GX.B64+'upload_5935c399fbac4c67a79e02c1e4c88ef6.webp';
 GX.BVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%91%D1%8D%D0%BB%D1%8C%20(mp3cut.net).mp3';
 GX.GVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%93%D1%80%D0%B8%D1%84%D0%B8%D0%BD%20(mp3cut.net).mp3';
-GX.HVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%A5%D0%B5%D0%B9%D1%82.mp3';
 GX.GV  = GX.B64+'upload_3045498d06f44f7bb56d49f5ff147cb8.mp4';
 GX.MA  = GX.B64+'upload_6946a52090cc45fd92424c134cf41a7f.webp';
 GX.MT  = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galeon%20v2.mp3';
 
-var B64=GX.B64, PR=GX.PR, BA=GX.BA, GA=GX.GA, RA=GX.RA, BVO=GX.BVO, GVO=GX.GVO, HVO=GX.HVO, GV=GX.GV, MA=GX.MA, MT=GX.MT;
+var B64=GX.B64, PR=GX.PR, BA=GX.BA, GA=GX.GA, RA=GX.RA, BVO=GX.BVO, GVO=GX.GVO, GV=GX.GV, MA=GX.MA, MT=GX.MT;
 
 var $=function(i){return document.getElementById(i);};
 var wv=$('vrpg3-wave'),ph=$('vrpg3-phase'),lg=$('vrpg3-log'),en=$('vrpg3-enemies'),pt=$('vrpg3-party'),ac2=$('vrpg3-actions'),rs=$('vrpg3-result'),bt=$('vrpg3-bossTag');
@@ -44,7 +43,6 @@ function gxBuff(){try{var b=JSON.parse(localStorage.getItem('gx_buff')||'null');
 
 var BP={attack:['«Ммм… вот так… ещё…»','«Как приятно это ощущать…»','«Не останавливайся…»','«Я упиваюсь каждым ударом…»','«Ох… продолжай…»'],aoe:['«Все сразу… как же хорошо…»','«Они все такие сладкие…»','«Обожаю, когда их много…»','«Дрожите для меня…»'],execute:['«А-аах… ДА!»','«Небеса… это восхитительно!»','«Слишком… слишком хорошо!»','«Ещё… ещё убивай…»','«Я… я почти… ААХ!»'],ult:['«Сейчас будет очень горячо…»','«Получите всю мою силу…»','«Я больше не могу сдерживаться…»','«Исчезайте вместе со мной…»'],kill:['«АААХ! ВОТ ОНО!»','«Да-да-да-дааа!»','«Ещё один… ещё… я схожу с ума…»','«Охх… как глубоко он ушёл…»','«Я сейчас растаю от блаженства…»']};
 var GP={attack:['Огонь по цели. MP-5 стабильна.','Контакт подтверждён. Открываю огонь.','Одиночная цель. Пробиваю очередь.','Стреляю на подавление. Держите линию.','Цель в секторе. Работаю.'],smoke:['Дымовая граната. Прикрываю отряд.','Дым поставлен. Ничего не видно — значит, никто не попадёт.','Завеса развёрнута. Отдышитесь.'],heal:['Держись. Поле — моя операционная.','Рана не смертельна. Шью.','Пакеты перевязки расходуются быстро. Огонь плотный.','Живые важнее победы. Лечу.'],ult:['Второй шанс выделяю один. Цени его.','Отряд не бросаю. Никогда.','Сердце ещё бьётся. Значит, бой продолжается.'],kill:['Цель нейтрализована. Следующая.','Зона чиста.','Счётчик фрагов растёт. Продолжаю.'],crit:['КРИТ! Точно в швы брони!','Идеальный выстрел. Отметил.'],hcrit:['КРИТ-лечение! Медицинское чудо.','Вколола всё. Поднимайтесь.']};
-/* Хейт: реплики по каждому навыку */
 var HPT={attack:['Сканирую. Две цели заблокированы.','Дрон-залп готов. Выстрел.','Цели захвачены. Огонь.','Перекрёстный огонь. Отскок не предусмотрен.','Мои пушки не знают пощады. Как и я.','Считаю отдачу. Считаю фраги.','Данные цели загружены. Приговор — исполнен.'],
 buff:['Ядро разогнано. Отряд, бейте в полную силу.','Поддержка активна. Используйте её.','Разгоняю ваши системы. Стреляйте ярче.','Каждый ваш выстрел теперь вдвое злее. Не подведите.','Энергия перекачана. Уничтожайте.'],
 virus:['Вирус распространяется. Враги ослеплены.','Системы противника скомпрометированы.','Ваша броня больше не ваша. Как и ваши прицелы.','Инъекция доставлена. Враги бьют наугад.','Код заражения распространяется. Наслаждайтесь хаосом.'],
@@ -55,7 +53,7 @@ var HR=[
 {n:'N-04',cl:'Воин',st:3,col:'#dd4e60',hp:130,atk:14,cr:18,cd:160,ac:90,dd:8,img:'☠',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'обычная атака'},{k:'skill',l:'💥 Раскол',d:'урон + уязвимость +30%, КД 2'},{k:'ult',l:'✦ Ульта',d:'по всем'}]},
 {n:'Alisa',cl:'Лекарь',st:3,col:'#9fd18a',hp:105,atk:9,cr:10,cd:140,ac:85,dd:12,img:'✦',ult:{cd:6,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'обычная атака'},{k:'skill',l:'✧ Исцеление',d:'лечение отряда'},{k:'ult',l:'✦ Ульта',d:'мощное лечение'}]},
 {n:'Crysta',cl:'Стрелок',st:2,col:'#7fb8d8',hp:95,atk:13,cr:25,cd:170,ac:95,dd:10,img:'◎',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Выстрел',d:'обычная атака'},{k:'skill',l:'🎯 Меткий',d:'+20% урона и крита, КД 3'},{k:'ult',l:'✦ Ульта',d:'снайперский'}]},
-{n:'Sky',cl:'Ассасин',st:2,col:'#c9b8e8',hp:85,atk:12,cr:30,cd:190,ac:88,dd:22,img:'🕶',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'тратит тени: +30/60/90% урона и крита'},{k:'shadow',l:'🌑 Тень',d:'накопить тень (до 3)'},{k:'ult',l:'✦ Ульта',d:'теневой удар'}]}];
+{n:'Sky',cl:'Ассасин',st:2,col:'#c9b8e8',hp:85,atk:12,cr:30,cd:190,ac:88,dd:22,img:'🕶',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'тратит тени: +30/60/90% урона и крита'},{k:'shadow',l:'🌑 Тень',d:'удар + накопить тень (до 3)'},{k:'ult',l:'✦ Ульта',d:'теневой удар'}]}];
 var BL={n:'Bell',cl:'Загадка',st:4,col:'#e8a0ff',hp:115,atk:16,cr:22,cd:180,ac:93,dd:14,img:'🔔',ult:{cd:4,un:1},acts:[{k:'attack',l:'⚔ Удар',d:'по одной цели'},{k:'aoe',l:'💥 Волна',d:'по трём целям'},{k:'execute',l:'☠ Казнь',d:'5% мгновенная смерть'},{k:'ult',l:'✦ Ульта',d:'Колокол Пустоты'}]};
 var GR={n:'Griffin',cl:'Медик-штурмовик',st:4,col:'#7cff9b',hp:110,atk:13,cr:15,cd:150,ac:88,dd:15,img:'✚',ult:{cd:99,un:1},acts:[{k:'attack',l:'🔫 MP-5',d:'по одной цели'},{k:'smoke',l:'💨 Дым',d:'75% уклонения, 2 хода'},{k:'heal',l:'✚ Усиленное лечение',d:'двойное лечение, КРИТ ×2.5'},{k:'ult',l:'🕊 Возрождение',d:'воскрешение павшего, 1 раз'}]};
 var HEIT={n:'Хейт',cl:'Дрон-ИИ',st:4,col:'#7ac3f0',hp:100,atk:12,cr:20,cd:180,ac:90,dd:12,img:'🛸',ult:{cd:4,un:1},acts:[{k:'attack',l:'⚡ Атака Хейт',d:'150% по 2 целям'},{k:'reybuff',l:'🔧 Поддержка',d:'+100% урона, 2 хода, КД 4'},{k:'reyvirus',l:'🦠 Вирус в массы',d:'−40% урона врагов, КД 4'},{k:'ult',l:'✦ Реквием',d:'300% по всем, КРИТ ×2'}]};
@@ -111,7 +109,8 @@ var __gxGuestsSinceGriffin=0;
 function tryB(){st.bA=false;st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});if(st.wave>=5&&Math.random()<0.30){st.bA=true;var forceG=(__gxGuestsSinceGriffin>=3);var roll=Math.random();
 if(forceG||roll<0.34){var g=mkG();st.party.push(g);__gxGuestsSinceGriffin=0;st.gJ=true;log('✚ Зелёный свет пронзает тьму... Griffin вступает в бой! (ур.'+g.lv+')','#7cff9b');try{if(window.GriffinClass){window.GriffinClass.cross();window.GriffinClass.say(0.6);}else{grCrossFallback();say(GVO,0.6);}}catch(e){grCrossFallback();say(GVO,0.6);}
 }else if(roll<0.67){var guest=mkB();__gxGuestsSinceGriffin++;st.bJ=true;log('🔔 Из темноты появляется Bell... (ур.'+guest.lv+')','#e8a0ff');say(BVO,0.55);st.party.push(guest);
-}else{var r=mkHeit();st.party.push(r);__gxGuestsSinceGriffin++;st.rJ=true;log('🛸 Из потоков данных материализуется Хейт! (ур.'+r.lv+')','#7ac3f0');say(HVO,0.6);
+}else{/* Хейт: голос играет со слоя сайта — без дубля */
+var r=mkHeit();st.party.push(r);__gxGuestsSinceGriffin++;st.rJ=true;log('🛸 Из потоков данных материализуется Хейт! (ур.'+r.lv+')','#7ac3f0');
 }
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell,.gx3-griffin,.gx3-rey');if(c)window.animateBellAppear(c);},150);}}}
 
@@ -168,8 +167,15 @@ if(ec2){if(window.animateShake)window.animateShake(ec2);fl(ec2,'−'+d2,r2.crit?
 if(e2.hp<=0){__gxKill={idx:h.idx,boss:!!e2.boss};kill(e2);log(e2.n+' уничтожен!','#7ac3f0');log('Хейт: '+pk(HPT.kill,'hk'),'#7ac3f0');}});
 }
 else{if(!t){log('Нет цели');return;}sfx('attack');if(window.animateLunge)window.animateLunge(mc);var c0=cc(mc);burst(c0.x,c0.y,{count:12,color:h.def.col,speed:4});if(h.bell)log('Bell: '+pk(BP.attack,'ba'),'#e8a0ff');if(h.griffin)log('Griffin: '+pk(GP.attack,'ga'),'#7cff9b');if(!hitQ(h.ac,6)){log(h.def.n+' промахнулся');}else{var r0=h.reyDmg>0?Math.round(heroBase(h,-2,4)*2):heroBase(h,-2,4);if(h.def.n==='Sky'&&h.shSt>0)r0=Math.round(skyStrike(h,-2,4));var r=dmg(r0,heroCrit(h),h.cd2);var dd=dmgTo(t,arm(t,r.d));if(h.griffin&&r.crit)log('Griffin: '+pk(GP.crit,'gc'),'#7cff9b');var ec=en.querySelector('[data-eid="'+st.en.indexOf(t)+'"]');t.hp-=dd;if(ec){if(window.animateShake)window.animateShake(ec);fl(ec,'−'+dd,r.crit?'#ff4d6d':'#fff',r.crit);}log(h.def.n+' → '+t.n+': −'+dd+(t.mecha&&t.sh>0?' (щит)':'')+(r.crit?' КРИТ':''),h.def.col);if(t.hp<=0){__gxKill={idx:h.idx,boss:!!t.boss};kill(t);log(t.n+' уничтожен!',h.def.col);if(h.bell)log('Bell: '+pk(BP.kill,'bk'),'#ff6bff');if(h.griffin)log('Griffin: '+pk(GP.kill,'gk'),'#7cff9b');}}}}
-else if(act==='shadow'&&h.def.n==='Sky'){h.shSt=Math.min(3,(h.shSt||0)+1);
-log('🌑 Sky растворяется в тени... ('+h.shSt+'/3): следующий удар +'+(h.shSt*30)+'% урона и +'+[0,15,20,30][h.shSt]+'% к шансу крита','#c9b8e8');}
+else if(act==='shadow'&&h.def.n==='Sky'){/* ТЕНЬ: удар + накопление стака */
+sfx('attack');if(window.animateLunge)window.animateLunge(mc);
+if(!t){log('Нет цели');return;}
+var rs1=dmg(heroBase(h,0,4),heroCrit(h),h.cd2);var ds1=dmgTo(t,arm(t,rs1.d));t.hp-=ds1;
+var ecs=en.querySelector('[data-eid="'+st.en.indexOf(t)+'"]');
+if(ecs){if(window.animateShake)window.animateShake(ecs);fl(ecs,'−'+ds1,h.def.col,rs1.crit);}
+h.shSt=Math.min(3,(h.shSt||0)+1);
+log('🌑 Sky наносит удар из полутени ('+h.shSt+'/3 стака): следующий удар +'+(h.shSt*30)+'% урона и +'+[0,15,20,30][h.shSt]+'% к шансу крита','#c9b8e8');
+if(t.hp<=0){__gxKill={idx:h.idx,boss:!!t.boss};kill(t);}}
 else if(act==='aoe'&&h.bell){sfx('attack');if(window.animateLunge)window.animateLunge(mc);var ts2=al.slice(0,3);log('Bell: '+pk(BP.aoe,'bo'),'#e8a0ff');ts2.forEach(function(e2){var r2=dmg(bdmg(rnd(Math.round(h.atk)-1,Math.round(h.atk)+3)),h.cr,h.cd2);var d2=dmgTo(e2,arm(e2,r2.d));e2.hp-=d2;var e2c=en.querySelector('[data-eid="'+st.en.indexOf(e2)+'"]');if(e2c){if(window.animateShake)window.animateShake(e2c);fl(e2c,'−'+d2,'#e8a0ff');var c2=cc(e2c);burst(c2.x,c2.y,{count:10,color:'#e8a0ff',speed:3.5});}if(e2.hp<=0){__gxKill={idx:h.idx,boss:!!e2.boss};kill(e2);log(e2.n+' уничтожен!');log('Bell: '+pk(BP.kill,'bk'),'#ff6bff');}});}
 else if(act==='smoke'&&h.griffin){sfx('attack');if(window.animateLunge)window.animateLunge(mc);log('Griffin: '+pk(GP.smoke,'gs'),'#7cff9b');h.smCd=4;st.party.forEach(function(p){if(p.hp>0)p.dgB=2;});log('💨 Дымовая завеса! Все союзники: 75% уклонения на 2 хода','#7cff9b');}
 else if(act==='reybuff'&&h.rey){sfx('attack');if(window.animateLunge)window.animateLunge(mc);h.reyCd=4;st.party.forEach(function(p){if(p.hp>0)p.reyDmg=2;});log('Хейт: '+pk(HPT.buff,'hb'),'#7ac3f0');log('🔧 Поддержка Хейт: +100% урона всему отряду на 2 хода!','#7ac3f0');}
@@ -199,7 +205,8 @@ log('💥 Раскол! '+t.n+' получает уязвимость: +30% ур
 if(t.hp<=0){__gxKill={idx:h.idx,boss:!!t.boss};kill(t);}}
 else if(h.def.n==='Crysta'){h.crB=2;
 log('🎯 Crysta сосредотачивается: +20% урона и +20% к шансу крита (2 хода)!','#7fb8d8');}
-else{var r4c=dmg(skyStrike(h,3,9),heroCrit(h),h.cd2);
+else{/* Sky: удар с тратой теней */
+var r4c=dmg(skyStrike(h,3,9),heroCrit(h),h.cd2);
 var d6c=dmgTo(t,arm(t,r4c.d));t.hp-=d6c;var e6b=en.querySelector('[data-eid="'+st.en.indexOf(t)+'"]');if(e6b)fl(e6b,'−'+d6c,h.def.col,r4c.crit);log(h.def.n+' навык → '+t.n+': −'+d6c+(t.mecha&&t.sh>0?' (щит)':''),h.def.col);if(t.hp<=0){__gxKill={idx:h.idx,boss:!!t.boss};kill(t);}}}
 if(h.smCd>0)h.smCd--;if(h.reyCd>0)h.reyCd--;if(h.virCd>0)h.virCd--;
 h.act=true;sel=null;tg=null;
