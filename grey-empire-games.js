@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v17.0: Стан Crysta, уклонение Sky, тик-лечение Alisa, 100% крит, кровотечение N-04, иконки эффектов */
+/* Хроники Grey Empire v17.1: Стан Crysta с КД 4 хода, уклонение Sky, тик-лечение Alisa, 100% крит, кровотечение N-04 */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -52,7 +52,7 @@ kill:['Цель отключена.','Фраг подтверждён.','Ути�
 var HR=[
 {n:'N-04',cl:'Воин',st:3,col:'#dd4e60',hp:130,atk:14,cr:18,cd:160,ac:90,dd:8,img:'☠',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'обычная атака'},{k:'skill',l:'💥 Раскол',d:'урон + уязвимость +30%, КД 2'},{k:'ult',l:'✦ Ульта',d:'кровотечение всем врагам'}]},
 {n:'Alisa',cl:'Лекарь',st:3,col:'#9fd18a',hp:105,atk:9,cr:10,cd:140,ac:85,dd:12,img:'✦',ult:{cd:6,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'обычная атака'},{k:'skill',l:'✧ Исцеление',d:'лечение отряда'},{k:'ult',l:'✦ Ульта',d:'тик-лечение отряду, 2 хода'}]},
-{n:'Crysta',cl:'Стрелок',st:2,col:'#7fb8d8',hp:95,atk:13,cr:25,cd:170,ac:95,dd:10,img:'◎',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Выстрел',d:'обычная атака'},{k:'skill',l:'💫 Стан',d:'урон по 2 целям + пропуск хода'},{k:'ult',l:'✦ Ульта',d:'100% крит, 2 хода'}]},
+{n:'Crysta',cl:'Стрелок',st:2,col:'#7fb8d8',hp:95,atk:13,cr:25,cd:170,ac:95,dd:10,img:'◎',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Выстрел',d:'обычная атака'},{k:'skill',l:'💫 Стан',d:'урон по 2 целям + пропуск хода, КД 4'},{k:'ult',l:'✦ Ульта',d:'100% крит, 2 хода'}]},
 {n:'Sky',cl:'Ассасин',st:2,col:'#c9b8e8',hp:85,atk:12,cr:30,cd:190,ac:88,dd:22,img:'🕶',ult:{cd:5,un:5},acts:[{k:'attack',l:'⚔ Удар',d:'тратит тени: +30/60/90% урона и крита'},{k:'shadow',l:'🌑 Тень',d:'удар + накопить тень (до 3)'},{k:'ult',l:'✦ Ульта',d:'100% уклонения, 2 хода'}]}];
 var BL={n:'Bell',cl:'Загадка',st:4,col:'#e8a0ff',hp:115,atk:16,cr:22,cd:180,ac:93,dd:14,img:'🔔',ult:{cd:4,un:1},acts:[{k:'attack',l:'⚔ Удар',d:'по одной цели'},{k:'aoe',l:'💥 Волна',d:'по трём целям'},{k:'execute',l:'☠ Казнь',d:'5% мгновенная смерть'},{k:'ult',l:'✦ Ульта',d:'Колокол Пустоты'}]};
 var GR={n:'Griffin',cl:'Медик-штурмовик',st:4,col:'#7cff9b',hp:110,atk:13,cr:15,cd:150,ac:88,dd:15,img:'✚',ult:{cd:99,un:1},acts:[{k:'attack',l:'🔫 MP-5',d:'по одной цели'},{k:'smoke',l:'💨 Дым',d:'75% уклонения, 2 хода'},{k:'heal',l:'✚ Усиленное лечение',d:'двойное лечение, КРИТ ×2.5'},{k:'ult',l:'🕊 Возрождение',d:'воскрешение павшего, 1 раз'}]};
@@ -159,7 +159,6 @@ function skyStrike(h,lo,hi){
 var b=heroBase(h,lo,hi);
 if(h.shSt>0){b=Math.round(b*(1+h.shSt*0.3));log('🌑 Тень усиливает удар ×'+(1+h.shSt*0.3)+' и добавляет +'+[0,15,20,30][h.shSt]+'% к шансу крита!','#c9b8e8');h.shSt=0;}
 return b;}
-/* уклонение Sky: проверка перед любым уроном по герою */
 function dodgeCheck(t){if(t&&t.dodge>0){log('🪶 '+t.def.n+' полностью уклонился от атаки!','#c9b8e8');return true;}return false;}
 
 pt.addEventListener('click',function(e){if(st.over||busy)return;var c=e.target.closest('[data-uid]');if(!c)return;var h=st.party.find(function(p){return p.idx===+c.dataset.uid;});if(!h||h.hp<=0||h.act)return;sel=h.idx;tg=null;rd();});
@@ -216,7 +215,8 @@ var e6c=en.querySelector('[data-eid="'+st.en.indexOf(t)+'"]');
 if(e6c){fl(e6c,'−'+d6,h.def.col,r4.crit);if(window.animateShake)window.animateShake(e6c);}
 log('💥 Раскол! '+t.n+' получает уязвимость: +30% урона по ней (2 хода)','#dd4e60');
 if(t.hp<=0){__gxKill={idx:h.idx,boss:!!t.boss};kill(t);}}
-else if(h.def.n==='Crysta'){/* СТАН: урон по 2 целям + пропуск 2 ходов */
+else if(h.def.n==='Crysta'){/* СТАН: урон по 2 целям + пропуск 2 ходов, КД 4 */
+h.skCd=4;
 if(!al.length){log('Нет целей');return;}
 var tsS=al.slice(0,2);log('💫 Стан! Crysta бьёт '+tsS.length+' цели','#7fb8d8');
 tsS.forEach(function(e2){var r5=dmg(heroBase(h,0,4),heroCrit(h),h.cd2);var d7=dmgTo(e2,arm(e2,r5.d));e2.hp-=d7;
@@ -237,7 +237,7 @@ pr();if(!aE().length){rd();setTimeout(wc,700);return;}if(lose())return;var left=
 function wc(){log('Волна '+st.wave+' зачищена!','#e8c060');mX();try{var AK='grey_empire_achv',AS=JSON.parse(localStorage.getItem(AK)||'{}');var cleared=st.wave;if(cleared>=1&&!AS.ach1){AS.ach1=true;if(typeof window.showAch==='function')window.showAch({n:'Новичок на поле боя!',d:'Пройдена первая волна'});}if(cleared>=5&&!AS.ach2){AS.ach2=true;if(typeof window.showAch==='function')window.showAch({n:'Рядовой вояка!',d:'Пройдено пять волн'});}AS.maxCleared=Math.max(AS.maxCleared||0,cleared);localStorage.setItem(AK,JSON.stringify(AS));}catch(e){}if(st.bA){log('Гость растворяется в тени...','#e8a0ff');}st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});st.bA=false;sv.maxWave=Math.max(sv.maxWave,st.wave+1);pr();st.wave++;st.en=mkE();var m1=st.en[0]&&st.en[0].mecha;if(m1)mE2();st.party.forEach(function(p){fixHp(p);var lv=sv.levels[p.idx]||1;if(p.hp>0&&isFinite(p.hp)){p.hp=Math.min(p.mx,p.hp+16+lv*2);p.act=false;p.dgB=0;p.reyDmg=0;p.skCd=0;p.crB=0;p.dodge=0;p.crit100=0;p.regen=0;}});tryB();if(!m1&&isB(st.wave))log('⚠ Приближается БОСС!','#e8c060');rd();busy=true;setTimeout(et,1100);}
 
 function et(){if(st.over){busy=false;rd();return;}var es=aE();if(!aH().length){busy=false;rd();return;}
-/* кровотечение N-04: урон в начале хода врагов */
+/* кровотечение N-04 */
 st.en.forEach(function(e){if(e.al&&e.bleed>0){var src=st.party.find(function(p){return p.def&&p.def.n==='N-04'&&p.hp>0;});var bd=src?Math.round(src.atk):14;e.hp-=bd;var eB=en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]');if(eB)fl(eB,'🩸−'+bd,'#ff2a46');log('🩸 Кровотечение по '+e.n+': −'+bd,'#dd4e60');if(e.hp<=0){e.hp=0;e.al=false;log(e.n+' истёк кровью!','#dd4e60');}}});
 es.forEach(function(e){var hh=aH();if(!hh.length)return;
 if(e.stun>0){log('💫 '+e.n+' оглушён и пропускает ход','#7fb8d8');return;}
