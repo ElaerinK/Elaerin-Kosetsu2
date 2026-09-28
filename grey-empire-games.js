@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v18.2: Alisa OneShot (трек при первой жертве MECHA), достижения-счётчики, Стан 10% боссам, ульты +200%, осколки смерти, затемнение походивших */
+/* Хроники Grey Empire v18.3: крит-шанс на ульты Sky/Alisa/N-04/Crysta, Alisa OneShot, достижения-счётчики, Стан 10% боссам, ульты +200%, осколки смерти, затемнение походивших */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -176,7 +176,6 @@ log('★ '+HR[__gxKill.idx].n+' получает бонус опыта +'+(__gxK
 __gxKill=null;
 }
 if(e.mecha)log('MECHA-GALLEON: '+pk(MP.df,'mdf'),'#c08bff');}
-/* смерть героя: осколки + метаданные достижений + трек Alisa OneShot */
 function allyDeath(h,killerMecha){
 try{
 var el=pt.querySelector('[data-uid="'+h.idx+'"]');
@@ -193,6 +192,7 @@ function strongestAtk(){var b=0;st.party.forEach(function(p){if(!p.bell&&!p.grif
 function enemyDmg(e,dm){if(e&&e.virus>0)dm=Math.max(1,Math.round(dm*0.6));return dm;}
 function heroBase(h,lo,hi){var b=bdmg(rnd(Math.round(h.atk)+lo,Math.round(h.atk)+hi));if(h.crB>0)b=Math.round(b*1.2);return b;}
 function heroCrit(h){var c=h.cr;if(h.crB>0)c+=20;if(h.crit100>0)c=100;if(h.def.n==='Sky'&&h.shSt>0)c+=[0,15,20,30][h.shSt];return c;}
+function ultCrit(h){return Math.random()*100<(h.cr+(gxBuff()==='critd'?20:0));}
 function skyStrike(h,lo,hi){
 var b=heroBase(h,lo,hi);
 if(h.shSt>0){b=Math.round(b*(1+h.shSt*0.3));log('🌑 Тень усиливает удар ×'+(1+h.shSt*0.3)+' и добавляет +'+[0,15,20,30][h.shSt]+'% к шансу крита!','#c9b8e8');h.shSt=0;}
@@ -240,25 +240,29 @@ if(e3c)fl(e3c,'−'+dm,crit?'#ff4d6d':'#7ac3f0',crit);
 if(e3.hp<=0){__gxKill={idx:h.idx,boss:!!e3.boss};kill(e3);}});
 log('✦ РЕКВИЕМ: Хейт взламывает базу противника и запускает Ракетный удар по всем!','#7ac3f0');}
 else if(h.def.n==='Sky'){sfx('ult');h.uc=h.def.ult.cd;h.dodge=2;
-var d4s=bdmg(Math.round(h.atk*2));
-al.forEach(function(e4){var d5s=dmgTo(e4,arm(e4,d4s));e4.hp-=d5s;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5s,h.def.col);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
-log('✦ Sky: теневой удар −'+d4s+' всем и 100% уклонения на 2 хода!','#c9b8e8');}
+var critS=ultCrit(h);
+var d4s=bdmg(Math.round(h.atk*2));if(critS)d4s=Math.round(d4s*UM);
+al.forEach(function(e4){var d5s=dmgTo(e4,arm(e4,d4s));e4.hp-=d5s;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5s,critS?'#ff4d6d':h.def.col,critS);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
+log('✦ Sky: теневой удар −'+d4s+' всем'+(critS?' КРИТ ×1.8':'')+' и 100% уклонения на 2 хода!','#c9b8e8');}
 else if(h.def.n==='Crysta'){sfx('ult');h.uc=h.def.ult.cd;h.crit100=2;
-var d4c=bdmg(Math.round(h.atk*2));
-al.forEach(function(e4){var d5c=dmgTo(e4,arm(e4,d4c));e4.hp-=d5c;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5c,h.def.col);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
-log('✦ Crysta: залп −'+d4c+' всем и 100% крит на 2 хода!','#7fb8d8');}
+var critC=ultCrit(h);
+var d4c=bdmg(Math.round(h.atk*2));if(critC)d4c=Math.round(d4c*UM);
+al.forEach(function(e4){var d5c=dmgTo(e4,arm(e4,d4c));e4.hp-=d5c;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5c,critC?'#ff4d6d':h.def.col,critC);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
+log('✦ Crysta: залп −'+d4c+' всем'+(critC?' КРИТ ×1.8':'')+' и 100% крит на 2 хода!','#7fb8d8');}
 else if(h.def.n==='N-04'){sfx('ult');h.uc=h.def.ult.cd;
-var d4n=bdmg(Math.round(h.atk*2));
-al.forEach(function(e4){var d5n=dmgTo(e4,arm(e4,d4n));e4.hp-=d5n;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5n,h.def.col);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
+var critN=ultCrit(h);
+var d4n=bdmg(Math.round(h.atk*2));if(critN)d4n=Math.round(d4n*UM);
+al.forEach(function(e4){var d5n=dmgTo(e4,arm(e4,d4n));e4.hp-=d5n;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5n,critN?'#ff4d6d':h.def.col,critN);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
 al.forEach(function(e5){if(e5.al)e5.bleed=2;});
-log('✦ Раскол Империи! −'+d4n+' всем и кровотечение (2 хода)','#dd4e60');}
+log('✦ Раскол Империи! −'+d4n+' всем'+(critN?' КРИТ ×1.8':'')+' и кровотечение (2 хода)','#dd4e60');}
 else if(h.def.cl==='Лекарь'){sfx('ult');h.uc=h.def.ult.cd;var rg=bheal(Math.round(rnd(28,42)*1.5));
-var d4a=bdmg(Math.round(h.atk*2));
-al.forEach(function(e4){var d5a=dmgTo(e4,arm(e4,d4a));e4.hp-=d5a;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5a,h.def.col);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
-var inst=bheal(Math.round(rnd(28,42)*2));var hd0=0;
+var critA=ultCrit(h);
+var d4a=bdmg(Math.round(h.atk*2));if(critA)d4a=Math.round(d4a*UM);
+al.forEach(function(e4){var d5a=dmgTo(e4,arm(e4,d4a));e4.hp-=d5a;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5a,critA?'#ff4d6d':h.def.col,critA);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});
+var inst=bheal(Math.round(rnd(28,42)*2));if(critA)inst=Math.round(inst*1.5);var hd0=0;
 st.party.forEach(function(p){fixHp(p);if(p.hp>0&&p.hp<p.mx){var ad2=Math.min(p.mx-p.hp,inst);p.hp+=ad2;hd0+=ad2;}});
 st.party.forEach(function(p){if(p.hp>0)p.regen=2;});
-log('✦ Alisa: −'+d4a+' всем, лечение +'+hd0+' отряду и тик-лечение (2 хода)!','#9fd18a');}
+log('✦ Alisa: −'+d4a+' всем'+(critA?' КРИТ ×1.8':'')+', лечение +'+hd0+' отряду и тик-лечение (2 хода)!','#9fd18a');}
 else if(h.bell){sfx('ult');h.uc=h.def.ult.cd;var c4=cc(mc);burst(c4.x,c4.y,{count:35,color:h.def.col,speed:6,size:4,life:50});var bc=ucr();log('Bell: '+pk(BP.ult,'bu')+(bc?' КРИТ!':''),'#e8a0ff');al.forEach(function(e3){var dm=bdmg(rnd(20,34)+Math.floor(h.atk));if(bc)dm=Math.round(dm*UM);dm=dmgTo(e3,arm(e3,dm));e3.hp-=dm;var e3c=en.querySelector('[data-eid="'+st.en.indexOf(e3)+'"]');if(e3c)fl(e3c,'−'+dm,bc?'#ff4d6d':'#e8a0ff',bc);if(e3.hp<=0){if(e3.mecha){window.gxMeta.bellMechaKills=(window.gxMeta.bellMechaKills||0)+1;}__gxKill={idx:h.idx,boss:!!e3.boss};kill(e3);log('Bell: '+pk(BP.kill,'bk'),'#ff6bff');}});log('Bell использует Колокол Пустоты!'+(bc?' КРИТ ×1.8':''),bc?'#ff4d6d':'#e8a0ff');if(window.showBellUltVideo)window.showBellUltVideo();}
 else{sfx('ult');h.uc=h.def.ult.cd;var c4b=ucr();var d4=bdmg(Math.round(h.atk*2));if(c4b)d4=Math.round(d4*UM);if(h.crB>0)d4=Math.round(d4*1.2);al.forEach(function(e4){var d5=dmgTo(e4,arm(e4,d4));e4.hp-=d5;var e4c=en.querySelector('[data-eid="'+st.en.indexOf(e4)+'"]');if(e4c)fl(e4c,'−'+d5,c4b?'#ff4d6d':h.def.col,c4b);if(e4.hp<=0){__gxKill={idx:h.idx,boss:!!e4.boss};kill(e4);}});log(h.def.n+' использует ульту! −'+d4+' всем'+(c4b?' КРИТ ×1.8':''),c4b?'#ff4d6d':h.def.col);}}
 else if(act==='skill'){sfx('attack');if(window.animateLunge)window.animateLunge(mc);
