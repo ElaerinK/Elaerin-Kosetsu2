@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v18.1: достижения-счётчики (Bell/MECHA, Sky смерти, Alisa первая кровь), Стан 10% боссам, ульты +200%, осколки смерти, затемнение походивших */
+/* Хроники Grey Empire v18.2: Alisa OneShot (трек при первой жертве MECHA), достижения-счётчики, Стан 10% боссам, ульты +200%, осколки смерти, затемнение походивших */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -17,11 +17,12 @@ GX.GA  = GX.B64+'upload_7ac7c714935b45059cd05df5e1672314.webp';
 GX.RA  = GX.B64+'upload_5935c399fbac4c67a79e02c1e4c88ef6.webp';
 GX.BVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%91%D1%8D%D0%BB%D1%8C%20(mp3cut.net).mp3';
 GX.GVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%93%D1%80%D0%B8%D1%84%D0%B8%D0%BD%20(mp3cut.net).mp3';
+GX.AVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Alisa%20OneShot.mp3';
 GX.GV  = GX.B64+'upload_3045498d06f44f7bb56d49f5ff147cb8.mp4';
 GX.MA  = GX.B64+'upload_6946a52090cc45fd92424c134cf41a7f.webp';
 GX.MT  = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galeon%20v2.mp3';
 
-var B64=GX.B64, PR=GX.PR, BA=GX.BA, GA=GX.GA, RA=GX.RA, BVO=GX.BVO, GVO=GX.GVO, GV=GX.GV, MA=GX.MA, MT=GX.MT;
+var B64=GX.B64, PR=GX.PR, BA=GX.BA, GA=GX.GA, RA=GX.RA, BVO=GX.BVO, GVO=GX.GVO, AVO=GX.AVO, GV=GX.GV, MA=GX.MA, MT=GX.MT;
 
 /* МЕТА ДОСТИЖЕНИЙ: сайт читает эти счётчики и выдаёт анимации */
 window.gxMeta=window.gxMeta||{bellMechaKills:0,skyDeaths20:0,alisaFirstBlood:false};
@@ -175,14 +176,14 @@ log('★ '+HR[__gxKill.idx].n+' получает бонус опыта +'+(__gxK
 __gxKill=null;
 }
 if(e.mecha)log('MECHA-GALLEON: '+pk(MP.df,'mdf'),'#c08bff');}
-/* смерть героя: осколки + метаданные достижений */
+/* смерть героя: осколки + метаданные достижений + трек Alisa OneShot */
 function allyDeath(h,killerMecha){
 try{
 var el=pt.querySelector('[data-uid="'+h.idx+'"]');
 shatterFx(el);
 if(window.gxMeta){
 if(h.def&&h.def.n==='Sky'&&st.wave<=20)window.gxMeta.skyDeaths20=(window.gxMeta.skyDeaths20||0)+1;
-if(killerMecha&&h.def&&h.def.n==='Alisa'&&!st.firstDeath&&!window.gxMeta.alisaFirstBlood)window.gxMeta.alisaFirstBlood=true;
+if(killerMecha&&h.def&&h.def.n==='Alisa'&&!st.firstDeath&&!window.gxMeta.alisaFirstBlood){window.gxMeta.alisaFirstBlood=true;log('💀 «Alisa OneShot» — MECHA-GALLEON выбрал первую жертву...','#c08bff');say(AVO,0.7);}
 }
 st.firstDeath=true;
 }catch(e){}
