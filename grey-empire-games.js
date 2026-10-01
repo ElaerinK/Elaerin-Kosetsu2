@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v19.2: + элитный босс Seoshi (атака ×1.15, Красная орхидея, тихая зачистка, Контракт, респираторный выброс, пассивка 10% вампир), Razor (фиксы 32с/голос/2500%), APOFIS D-3/D-7, боссы усилены, syncParty, крит на ульты, осколки смерти */
+/* Хроники Grey Empire v19.3: фиксы Seoshi (списание ssGhost, округление тихой зачистки, единый ролл элитных боссов), Razor (глитч 32с, голос глохнет, 2500%), APOFIS D-3/D-7, боссы усилены, syncParty, крит на ульты, осколки смерти */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -67,7 +67,6 @@ var SK='grey_empire_rpg_v4',BE=5,UC=25,UM=1.8,MC=0.20,GRC=10,GRH=2.5,BOSS_ATK=1.
 var D7T={attack:['Ни шагу назад. Только вперёд.','Зачистка периметра в процессе.','Grey Empire на мушке.','Жду указаний… указания получены. Огонь!','Цель в зоне поражения. Работаю.','Приказ ясен: уничтожить. Выполняю.'],aim:['Навожу прицел… упреждение рассчитано.','Лазер захвачен. Через две секунды — выстрел.','Стабилизирую наведение… не двигайтесь.','Захват цели. Пуск разрешён?… Пуск разрешён.'],sup:['Подавляющий огонь! Всем стоять на месте!','Заливаю сектор огнём.','Периметр под контролем. Огонь на подавление!'],def:['Переходим к укреплённой обороне!','Удержать позицию любой ценой!','Броневые плиты активированы. Пробейте, если сможете.'],kill:['Цель уничтожена. Периметр чист.','Отряд Grey Empire ослаблен. Зачистка продолжается.','Фраг подтверждён. Следующая цель.'],death:['D-7… выбыл… запрос… подкреплени—','Дрон потух... связь потеряна.','Штурмовик D-7 отключён.']};
 var D3T={attack:['Держать темп. Периметр под контролем.','Скорость — моё оружие. Атакую!','Grey Empire в фокусе. Работаю по плану.','Фланг вскрыт. Двигаюсь на сближение.','Приказ не обсуждаем. Выполняю.'],dash:['Тактический рывок! Меня не достанут!','Маневр выполнен. Ищите меня!','Из зоны огня — в зону удара!'],shot:['Точный выстрел! Раскол гарантирован!','Одна цель. Один разлом.','Стреляю на опережение!'],knife:['Контратака! Нож ближе пули!','Сблизился — добиваю в упор!','Лезвие не знает промаха.'],kill:['Цель снята. Держу темп.','Периметр расчищается. Следующая.','Лёгкая добыча. Иду дальше.'],death:['D-3… скорость… отказ… свя—','Системы… не отвечаю…','Лёгкий штурмовик D-3 выведен из строя.']};
 var RZT={attack:['Grey Empire… как же я вас люблю!','Мои любимые куклы. Потанцуем!','Каждый удар — композиция. Аплодируйте!','Ваша боль — мой шедевр!','Grey Empire — мой смысл жизни! Ломаться так красиво!'],blade:['Лезвия крови! Пейте!','Два разреза. Один на память!','Кровь — лучший соус к спектаклю!'],apple:['В яблочко! Прямо в сердце!','Сто процентов. Ноль пощады!','Прицел не нужен. Я чувствую кукол!'],dance:['Танец смерти! Попробуйте достать меня!','Кружись, кружись, куколка!','Не достанете. Никто не достаёт!'],reap:['Я — ваш жнец! Ха-ха-ха!','Самый хрупкий — умирает первым!','Кого же мне выбрать… этого! Ха-ха!'],kill:['Ещё кукла сломана! Какая жалость… ахахаха!','Обожаю этот хруст! Спасибо за ужин!','Grey Empire — смысл моей жизни! Такие ломкие!','Аплодисменты! Аплодисменты! Какой финал!'],death:['Что… нет… мои… куклы…','Развлекались… славно… до встре—','Немыслимо… меня… переиграли…']};
-/* Реплики SEOSHI */
 var SST={attack:['Ничего личного. Просто бизнес.','Деньги — современный язык решения всех вопросов.','Контракт есть контракт. Извините.','Ваши жизни оценены. Недёшево, но оценено.'],orchid:['Красная орхидея распускается…','Красота и смерть в одном цветке.'],quiet:['Тихая зачистка. Вы даже не услышите.','Тише… это последний раз.'],contract:['На вас оформлен контракт. Подпись не требуется.','Смета составлена. Оплата — ваши жизни.'],mist:['Респираторный выброс. До встречи… или нет.'],kill:['Дело закрыто. Спасибо за сотрудничество.','Ничего личного. Просто работа.'],death:['Контракт… расторгнут…','Гонорар… не понадобится…']};
 
 function razGlitch(txt,ms){try{
@@ -85,13 +84,14 @@ document.body.appendChild(t);
 requestAnimationFrame(function(){t.style.transform='translateY('+(r.height+30)+'px)';});
 setTimeout(function(){t.remove();},1100);
 }catch(e){}}
-/* глитч-сакура Seoshi: лепестки, разрез катаной, разлёт */
 function seoshiIntro(){try{
 var sAu=new Audio(SVO);sAu.volume=0.75;sAu.preload='auto';
 window.__ssVoice=sAu;
+try{var bSs=window.gxBackgroundAudio;if(bSs&&bSs.el&&!bSs.el.paused){bSs.el.pause();}}catch(e2){}
 var n=0;
 function go(){n++;var p=sAu.play();if(p&&p.catch)p.catch(function(){if(n<3)document.addEventListener('pointerdown',go,{once:true});});}
 go();
+sAu.addEventListener('ended',function(){window.__ssVoice=null;menuMusicBack();});
 var o=document.createElement('div');
 o.style.cssText='position:fixed;inset:0;z-index:99997;pointer-events:none;overflow:hidden;background:repeating-linear-gradient(0deg,rgba(200,0,40,.10) 0 2px,transparent 2px 5px)';
 for(var i=0;i<40;i++){var p=document.createElement('div');
@@ -106,7 +106,8 @@ setTimeout(function(){o.style.transition='opacity .8s';o.style.opacity='0';setTi
 log('🌸 СЕОШИ ПРИНЯЛА КОНТРАКТ!','#ff3355');
 log('Seoshi: «'+pk(SST.attack,'ss0')+'»','#ff3355');
 }catch(e){}}
-function ssKillVoice(){try{if(window.__ssVoice){window.__ssVoice.pause();window.__ssVoice.currentTime=0;window.__ssVoice=null;}}catch(e){}}
+function ssKillVoice(){try{if(window.__ssVoice){window.__ssVoice.pause();window.__ssVoice.currentTime=0;window.__ssVoice=null;}}catch(e){}
+menuMusicBack();}
 
 var BP={attack:['«Ммм… вот так… ещё…»','«Как приятно это ощущать…»','«Не останавливайся…»','«Я упиваюсь каждым ударом…»','«Ох… продолжай…»'],aoe:['«Все сразу… как же хорошо…»','«Они все такие сладкие…»','«Обожаю, когда их много…»','«Дрожите для меня…»'],execute:['«А-аах… ДА!»','«Небеса… это восхитительно!»','«Слишком… слишком хорошо!»','«Ещё… ещё убивай…»','«Я… я почти… ААХ!»'],ult:['«Сейчас будет очень горячо…»','«Получите всю мою силу…»','«Я больше не могу сдерживаться…»','«Исчезайте вместе со мной…»'],kill:['«АААХ! ВОТ ОНО!»','«Да-да-да-дааа!»','«Ещё один… ещё… я схожу с ума…»','«Охх… как глубоко он ушёл…»','«Я сейчас растаю от блаженства…»']};
 var GP={attack:['Огонь по цели. MP-5 стабильна.','Контакт подтверждён. Открываю огонь.','Одиночная цель. Пробиваю очередь.','Стреляю на подавление. Держите линию.','Цель в секторе. Работаю.'],smoke:['Дымовая граната. Прикрываю отряд.','Дым поставлен. Ничего не видно — значит, никто не попадёт.','Завеса развёрнута. Отдышитесь.'],heal:['Держись. Поле — моя операционная.','Рана не смертельна. Шью.','Пакеты перевязки расходуются быстро. Огонь плотный.','Живые важнее победы. Лечу.'],ult:['Второй шанс выделяю один. Цени его.','Отряд не бросаю. Никогда.','Сердце ещё бьётся. Значит, бой продолжается.'],kill:['Цель нейтрализована. Следующая.','Зона чиста.','Счётчик фрагов растёт. Продолжаю.'],crit:['КРИТ! Точно в швы брони!','Идеальный выстрел. Отметил.'],hcrit:['КРИТ-лечение! Медицинское чудо.','Вколола всё. Поднимайтесь.']};
@@ -200,10 +201,12 @@ else p.hp=0;
 }
 function log(m,c){var d=document.createElement('div');d.textContent=m;if(c)d.style.color=c;lg.appendChild(d);lg.scrollTop=lg.scrollHeight;}
 function isB(w){return w%BE===0;}
-/* БОССЫ: Ядро ×1.3/×2 HP; MECHA ×1.25/×3 HP; RAZOR — база MECHA+укл.15%; SEOSHI — база MECHA+атака ×1.15; с 25 волны 15% */
+/* БОССЫ: Ядро ×1.3/×2; MECHA ×1.25/×3; RAZOR — база MECHA+укл.15%; SEOSHI — база MECHA+атака ×1.15;
+   с 25 волны единый 15%-ролл: или Razor, или Seoshi (50/50) */
 function mkE(){var w=st.wave;if(isB(w)){
-if(w>=25&&Math.random()<0.15){var sh2=Math.round((460+Math.floor(w/5)*240)*MECHA_HP);return[{n:'Seoshi',hp:sh2,mx:sh2,atk:Math.round((18+w*1.8)*MECHA_ATK*1.15),al:true,boss:true,seoshi:true,ssGhost:0,orchEva:0,cdOrch:0,cdQuiet:0,cdContr:0,cdMist:0,stun:0,bleed:0}];}
-if(w>=25&&Math.random()<0.15){var rh=Math.round((460+Math.floor(w/5)*240)*MECHA_HP);return[{n:'Razor',hp:rh,mx:rh,atk:Math.round((18+w*1.8)*MECHA_ATK),al:true,boss:true,razor:true,razEva:0,cdBlade:0,cdApple:0,cdDance:0,cdReap:0,stun:0,bleed:0}];}
+if(w>=25&&Math.random()<0.15){
+if(Math.random()<0.5){var sh2=Math.round((460+Math.floor(w/5)*240)*MECHA_HP);return[{n:'Seoshi',hp:sh2,mx:sh2,atk:Math.round((18+w*1.8)*MECHA_ATK*1.15),al:true,boss:true,seoshi:true,ssGhost:0,orchEva:0,cdOrch:0,cdQuiet:0,cdContr:0,cdMist:0,stun:0,bleed:0}];}
+var rh=Math.round((460+Math.floor(w/5)*240)*MECHA_HP);return[{n:'Razor',hp:rh,mx:rh,atk:Math.round((18+w*1.8)*MECHA_ATK),al:true,boss:true,razor:true,razEva:0,cdBlade:0,cdApple:0,cdDance:0,cdReap:0,stun:0,bleed:0}];}
 if(Math.random()<MC){var mh=Math.round((460+Math.floor(w/5)*240)*MECHA_HP);return[{n:'MECHA-GALLEON',hp:mh,mx:mh,atk:Math.round((18+w*1.8)*MECHA_ATK),al:true,boss:true,mecha:true,sh:0,tn:0,stun:0,bleed:0}];}
 var hp=Math.round((280+Math.floor(w/5)*140)*BOSS_HP);return[{n:'Apofis — Ядро',hp:hp,mx:hp,atk:Math.round((16+w*1.8)*BOSS_ATK),al:true,boss:true,stun:0,bleed:0}];}
 var c=Math.min(2+Math.floor(w/2),5),L=[],N=['Агент Apofis','Юнит Осколок','Оперативник','Кибер-глашатай','Элитный Каратель'];for(var i=0;i<c;i++){var h2=40+w*12+rnd(0,12);L.push({n:N[rnd(0,4)],hp:h2,mx:h2,atk:9+w*1.5,al:true,stun:0,bleed:0});}
@@ -235,18 +238,28 @@ if(forceG||roll<0.34){var g=mkG();st.party.push(g);__gxGuestsSinceGriffin=0;st.g
 }
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell,.gx3-griffin,.gx3-rey');if(c)window.animateBellAppear(c);},150);}}}
 
+/* возврат меню-музыки после приветствий боссов */
+function menuMusicBack(){try{
+if(window.__razVoice||window.__ssVoice)return;
+var b=window.gxBackgroundAudio;
+if(b&&b.el&&b.el.paused&&window.gxSoundMuted!==true)b.play().catch(function(){});
+}catch(e){}}
+
 function razIntro(){try{
 var rzAu=new Audio(RVO);rzAu.volume=0.75;rzAu.preload='auto';
 window.__razVoice=rzAu;
+try{var bRz=window.gxBackgroundAudio;if(bRz&&bRz.el&&!bRz.el.paused){bRz.el.pause();}}catch(e2){}
 var n=0;
 function go(){n++;var p=rzAu.play();if(p&&p.catch)p.catch(function(){if(n<3)document.addEventListener('pointerdown',go,{once:true});});}
 go();
+rzAu.addEventListener('ended',function(){window.__razVoice=null;menuMusicBack();});
 razGlitch('ОПАСНОСТЬ!',3000);
 log('☠ РАЗОР ВЫШЕЛ НА ОХОТУ!','#ff0033');
 log('Razor: «'+pk(RZT.attack,'rz0')+'»','#ff0033');
 setTimeout(function(){razGlitch('Попробуй выжить!',2000);},32000);
 }catch(e){}}
-function razKillVoice(){try{if(window.__razVoice){window.__razVoice.pause();window.__razVoice.currentTime=0;window.__razVoice=null;}}catch(e){}}
+function razKillVoice(){try{if(window.__razVoice){window.__razVoice.pause();window.__razVoice.currentTime=0;window.__razVoice=null;}}catch(e){}
+menuMusicBack();}
 
 function nb(k){var s=k?sv.maxWave:1;st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0,reyDmg:0,skCd:0,crB:0,shSt:0,dodge:0,crit100:0,regen:0,healB:0,burnT:0,crack:0,bleedH:0,mark:0};}),en:[],over:false,bA:false,bJ:false,gJ:false,rJ:false,firstDeath:false};st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;var rz0=st.en[0]&&st.en[0].razor;var ss0=st.en[0]&&st.en[0].seoshi;if(m0)mE2();if(rz0)razIntro();if(ss0)seoshiIntro();tryB();sel=tg=null;busy=false;lg.innerHTML='';rs.classList.add('hidden');if(!m0&&!rz0&&!ss0){if(isB(st.wave))log('⚠ БОСС! Ядро Apofis!','#e8c060');else log('Волна '+st.wave,'#e8c060');}rd();}
 function aE(){return st.en.filter(function(e){return e.al;});}
@@ -269,7 +282,6 @@ function hitQ(a,dd){return Math.random()*100<Math.max(8,Math.min(95,a-dd*0.5));}
 function dmg(b,c,cm){var d=b,crit=Math.random()*100<(c+(gxBuff()==='critd'?20:0));if(crit)d=Math.round(d*(cm/100));return{d:d,crit:crit};}
 function bdmg(base){return gxBuff()==='dmg'?Math.round(base*1.3):base;}
 function ucr(){return Math.random()*100<UC;}
-/* ОПЫТ: MECHA/RAZOR/SEOSHI — 2500%, босс — 500%, рядовой — 100% */
 function kill(e){e.hp=0;e.al=false;
 var el=en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]');
 shatterFx(el);
@@ -311,7 +323,6 @@ if(h.shSt>0){b=Math.round(b*(1+h.shSt*0.3));log('🌑 Тень усиливае�
 return b;}
 function dodgeCheck(t){if(t&&t.dodge>0){log('🪶 '+t.def.n+' полностью уклонился от атаки!','#c9b8e8');return true;}return false;}
 function evdCheck(t){if(t&&t.d7&&Math.random()*100<10){log('🎯 APOFIS D-7 уклонился от атаки!','#e07a30');return true;}if(t&&t.d3&&Math.random()*100<20){log('💨 APOFIS D-3 уклонился от атаки!','#c9a34a');return true;}if(t&&t.razor&&Math.random()*100<15){log('⚔ Razor уклонился от атаки!','#ff0033');return true;}if(t&&t.seoshi&&Math.random()*100<10){log('🌸 Seoshi уклонилась от атаки!','#ff3355');return true;}return false;}
-/* вампир Seoshi: +10% нанесённого урона в здоровье */
 function ssDrain(e,d){try{if(e&&e.seoshi&&d>0){var v=Math.max(1,Math.round(d*0.1));e.hp=Math.min(e.mx,e.hp+v);var el=en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]');if(el)fl(el,'+'+v,'#ff7799');log('🌸 Seoshi впитывает: +'+v+' HP','#ff3355');}}catch(e2){}}
 
 pt.addEventListener('click',function(e){if(st.over||busy)return;var c=e.target.closest('[data-uid]');if(!c)return;var h=st.party.find(function(p){return p.idx===+c.dataset.uid;});if(!h||h.hp<=0||h.act)return;sel=h.idx;tg=null;rd();});
@@ -408,7 +419,7 @@ st.party.forEach(function(p){if(p.hp>0&&!p.bell&&!p.griffin&&!p.rey){var i=p.idx
 var ns2=starsOf(sv.levels[i]);if(ns2>prevStars[i]){p.mx=Math.round(HR[i].hp*starMul(ns2))+(sv.levels[i]-1)*30;p.hp=p.mx;p.atk=Math.round(HR[i].atk*starMul(ns2)*10)/10+(sv.levels[i]-1)*4;p.cd2=HR[i].cd+(sv.levels[i]-1)*2;p.healB=healBonusOf(p);log('✦ '+HR[i].n+' получает '+ns2+'★! Характеристики ×'+starMul(ns2),'#ffd700');}}}});
 pr();if(!aE().length){rd();setTimeout(wc,700);return;}if(lose())return;var left=st.party.filter(function(p){return p.hp>0&&!p.act;});if(left.length===0){busy=true;rd();setTimeout(et,850);}else rd();});
 
-function wc(){log('Волна '+st.wave+' зачищена!','#e8c060');mX();try{var AK='grey_empire_achv',AS=JSON.parse(localStorage.getItem(AK)||'{}');var cleared=st.wave;if(cleared>=1&&!AS.ach1){AS.ach1=true;if(typeof window.showAch==='function')window.showAch({n:'Новичок на поле боя!',d:'Пройдена первая волна'});}if(cleared>=5&&!AS.ach2){AS.ach2=true;if(typeof window.showAch==='function')window.showAch({n:'Рядовой вояка!',d:'Пройдено пять волн'});}AS.maxCleared=Math.max(AS.maxCleared||0,cleared);localStorage.setItem(AK,JSON.stringify(AS));}catch(e){}if(st.bA){log('Гость растворяется в тени...','#e8a0ff');}st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});st.bA=false;sv.maxWave=Math.max(sv.maxWave,st.wave+1);pr();st.wave++;st.en=mkE();var m1=st.en[0]&&st.en[0].mecha;var rz1=st.en[0]&&st.en[0].razor;var ss1=st.en[0]&&st.en[0].seoshi;if(m1)mE2();if(rz1)razIntro();if(ss1)seoshiIntro();st.party.forEach(function(p){fixHp(p);var lv=sv.levels[p.idx]||1;if(p.hp>0&&isFinite(p.hp)){p.hp=Math.min(p.mx,p.hp+16+lv*2);p.act=false;p.dgB=0;p.reyDmg=0;p.skCd=0;p.crB=0;p.dodge=0;p.crit100=0;p.regen=0;p.burnT=0;p.crack=0;p.bleedH=0;p.mark=0;}});syncParty();tryB();if(!m1&&!rz1&&!ss1&&isB(st.wave))log('⚠ Приближается БОСС!','#e8c060');rd();busy=true;setTimeout(et,1100);}
+function wc(){log('Волна '+st.wave+' зачищена!','#e8c060');mX();menuMusicBack();try{var AK='grey_empire_achv',AS=JSON.parse(localStorage.getItem(AK)||'{}');var cleared=st.wave;if(cleared>=1&&!AS.ach1){AS.ach1=true;if(typeof window.showAch==='function')window.showAch({n:'Новичок на поле боя!',d:'Пройдена первая волна'});}if(cleared>=5&&!AS.ach2){AS.ach2=true;if(typeof window.showAch==='function')window.showAch({n:'Рядовой вояка!',d:'Пройдено пять волн'});}AS.maxCleared=Math.max(AS.maxCleared||0,cleared);localStorage.setItem(AK,JSON.stringify(AS));}catch(e){}if(st.bA){log('Гость растворяется в тени...','#e8a0ff');}st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});st.bA=false;sv.maxWave=Math.max(sv.maxWave,st.wave+1);pr();st.wave++;st.en=mkE();var m1=st.en[0]&&st.en[0].mecha;var rz1=st.en[0]&&st.en[0].razor;var ss1=st.en[0]&&st.en[0].seoshi;if(m1)mE2();if(rz1)razIntro();if(ss1)seoshiIntro();st.party.forEach(function(p){fixHp(p);var lv=sv.levels[p.idx]||1;if(p.hp>0&&isFinite(p.hp)){p.hp=Math.min(p.mx,p.hp+16+lv*2);p.act=false;p.dgB=0;p.reyDmg=0;p.skCd=0;p.crB=0;p.dodge=0;p.crit100=0;p.regen=0;p.burnT=0;p.crack=0;p.bleedH=0;p.mark=0;}});syncParty();tryB();if(!m1&&!rz1&&!ss1&&isB(st.wave))log('⚠ Приближается БОСС!','#e8c060');rd();busy=true;setTimeout(et,1100);}
 
 function et(){if(st.over){busy=false;rd();return;}var es=aE();if(!aH().length){busy=false;rd();return;}
 st.en.forEach(function(e){if(e.al&&e.bleed>0){var src=st.party.find(function(p){return p.def&&p.def.n==='N-04'&&p.hp>0;});var bd=src?Math.round(src.atk):14;e.hp-=bd;var eB=en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]');if(eB)fl(eB,'🩸−'+bd,'#ff2a46');log('🩸 Кровотечение по '+e.n+': −'+bd,'#dd4e60');if(e.hp<=0){e.hp=0;e.al=false;shatterFx(en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]'));log(e.n+' истёк кровью!','#dd4e60');}}});
@@ -416,7 +427,6 @@ var d7alive=es.some(function(e){return e.d7&&e.al;});
 if(d7alive){st.party.forEach(function(p){if(p.burnT>0&&p.hp>0){var bd7=14;p.burnT--;log('🔥 Поджог: '+p.def.n+' горит: −'+bd7,'#ff8a3d');p.hp-=bd7;var cB2=pt.querySelector('[data-uid="'+p.idx+'"]');if(cB2)fl(cB2,'🔥−'+bd7,'#ff8a3d');if(p.hp<=0){p.hp=0;allyDeath(p,false);}}});}
 var rzAl=es.find(function(e){return e.razor&&e.al;});
 if(rzAl){st.party.forEach(function(p){if(p.bleedH>0&&p.hp>0){var bR=Math.round(rzAl.atk*0.5);p.hp-=bR;var cH2=pt.querySelector('[data-uid="'+p.idx+'"]');if(cH2)fl(cH2,'🩸−'+bR,'#ff3355');log('🩸 Кровотечение Razor: '+p.def.n+' −'+bR,'#ff0033');if(p.hp<=0){p.hp=0;allyDeath(p,false);}}});}
-/* метка Контракта Seoshi: +50% её атаки в ход */
 var ssAl=es.find(function(e){return e.seoshi&&e.al;});
 if(ssAl){st.party.forEach(function(p){if(p.mark>0&&p.hp>0){var bM=Math.round(ssAl.atk*0.5);p.hp-=bM;var cM2=pt.querySelector('[data-uid="'+p.idx+'"]');if(cM2)fl(cM2,'📜−'+bM,'#ff3355');log('📜 Контракт истекает: '+p.def.n+' −'+bM,'#ff3355');if(p.hp<=0){p.hp=0;allyDeath(p,false);}}});}
 es.forEach(function(e){var hh=aH();if(!hh.length)return;
@@ -508,9 +518,13 @@ if(e.mecha){e.tn++;e.sh=0;if(e.tn%3===0){e.sh=0.4;log('MECHA-GALLEON: '+pk(MP.sh
 var t3=hh[rnd(0,hh.length-1)];var cE3=pt.querySelector('[data-uid="'+t3.idx+'"]');if(dodgeCheck(t3))return;if(t3.dgB>0&&Math.random()<0.75){log('💨 Дым спасает: '+t3.def.n+' уклонился!','#7cff9b');return;}if(!hitQ(82,t3.dd)){log(e.n+' промахнулся');return;}var d3n=enemyDmg(e,Math.round(e.atk+rnd(-2,3)));if(t3.crack>0)d3n=Math.round(d3n*1.2);t3.hp-=d3n;if(cE3){if(window.animateShake)window.animateShake(cE3);fl(cE3,'−'+d3n,'#dd4e60');var c3b=cc(cE3);burst(c3b.x,c3b.y,{count:8,color:'#dd4e60',speed:3});}sfx('hit');log(e.n+' → '+t3.def.n+': −'+d3n,e.boss?'#e8c060':'#dd4e60');if(t3.hp<=0){t3.hp=0;allyDeath(t3,false);}});
 st.party.forEach(function(p){fixHp(p);if(p.regen>0&&p.hp>0&&p.hp<p.mx){var ad=bheal(Math.round(rnd(28,42)*1.5));p.hp=Math.min(p.mx,p.hp+ad);healFx(p,ad);log('✚ Тик-лечение: '+p.def.n+' +'+ad,'#9fd18a');}});
 st.party.forEach(function(p){if(p.dgB>0)p.dgB--;if(p.reyDmg>0)p.reyDmg--;if(p.crB>0)p.crB--;if(p.skCd>0)p.skCd--;if(p.reyCd>0)p.reyCd--;if(p.virCd>0)p.virCd--;if(p.dodge>0)p.dodge--;if(p.crit100>0)p.crit100--;if(p.regen>0)p.regen--;if(p.burnT>0)p.burnT--;if(p.crack>0)p.crack--;if(p.bleedH>0)p.bleedH--;if(p.mark>0)p.mark--;if(p.hp>0)p.act=false;});
-st.en.forEach(function(e){if(e.virus>0)e.virus--;if(e.vuln>0)e.vuln--;if(e.stun>0)e.stun--;if(e.bleed>0)e.bleed--;if(e.sh7>0)e.sh7--;if(e.razEva>0)e.razEva--;if(e.orchEva>0)e.orchEva--;});busy=false;if(lose())return;rd();}
+/* СПИСАНИЕ ЭФФЕКТОВ ВРАГОВ: вкл. ssGhost (фикс вечной неуязвимости Seoshi) */
+st.en.forEach(function(e){if(e.virus>0)e.virus--;if(e.vuln>0)e.vuln--;if(e.stun>0)e.stun--;if(e.bleed>0)e.bleed--;if(e.sh7>0)e.sh7--;if(e.razEva>0)e.razEva--;if(e.orchEva>0)e.orchEva--;if(e.ssGhost>0)e.ssGhost--;});busy=false;if(lose())return;rd();}
 
-function lose(){if(st.party.every(function(h){fixHp(h);return h.hp<=0;})){st.over=true;mX();rs.textContent='✖ Отряд уничтожен';rs.classList.remove('hidden');log('ПОРАЖЕНИЕ. Прогресс сохранён.','#dd4e60');pr();rd();return true;}return false;}
+function lose(){if(st.party.every(function(h){fixHp(h);return h.hp<=0;})){st.over=true;mX();
+try{if(window.__razVoice){window.__razVoice.pause();window.__razVoice=null;}if(window.__ssVoice){window.__ssVoice.pause();window.__ssVoice=null;}}catch(e){}
+menuMusicBack();
+rs.textContent='✖ Отряд уничтожен';rs.classList.remove('hidden');log('ПОРАЖЕНИЕ. Прогресс сохранён.','#dd4e60');pr();rd();return true;}return false;}
 
 if($('vrpg3-btnReset'))$('vrpg3-btnReset').onclick=function(){nb(true);};
 if($('vrpg3-btnWipe'))$('vrpg3-btnWipe').onclick=function(){if(!confirm('Сбросить прогресс?'))return;sv={levels:[1,1,1,1],xp:[0,0,0,0],maxWave:1};pr();mX();__gxGuestsSinceGriffin=0;nb(false);};
