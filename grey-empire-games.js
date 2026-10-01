@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v19.3: фиксы Seoshi (списание ssGhost, округление тихой зачистки, единый ролл элитных боссов), Razor (глитч 32с, голос глохнет, 2500%), APOFIS D-3/D-7, боссы усилены, syncParty, крит на ульты, осколки смерти */
+/* Хроники Grey Empire v19.4: новое приветствие Seoshi («Хроники Seoshi.mp3»), фиксы Seoshi (списание ssGhost, округление тихой зачистки, единый ролл элитных боссов), фиксы Razor (глитч 32с, голос глохнет, 2500%), APOFIS D-3/D-7, боссы усилены, syncParty, крит на ульты, осколки смерти */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -25,7 +25,7 @@ GX.D3A = GX.B64+'upload_6c56c425b5f948e38009dbfbff6b3b9a.webp';
 GX.RAZA= GX.B64+'upload_28d6f1c6c2c74ba59e0a61d216e8e015.webp';
 GX.SEOSA= GX.B64+'upload_61af859fa89d48eeb6bf9d9790217915.webp';
 GX.RVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20Razor.mp3';
-GX.SVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%A5%D1%80%D0%BE%D0%BD%D0%B8%D0%BA%D0%B8%20Gray%20Empire%20Seoshi.mp3';
+GX.SVO = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/%D0%A5%D1%80%D0%BE%D0%BD%D0%B8%D0%BA%D0%B8%20Seoshi.mp3';
 GX.MT  = 'https://raw.githubusercontent.com/ElaerinK/Elaerin-Kosetsu2/main/Grey%20Empire%20%5BChronicles%5D%20-%20mecha-galeon%20v2.mp3';
 
 var B64=GX.B64, PR=GX.PR, BA=GX.BA, GA=GX.GA, RA=GX.RA, BVO=GX.BVO, GVO=GX.GVO, AVO=GX.AVO, GV=GX.GV, MA=GX.MA, D7A=GX.D7A, D3A=GX.D3A, RAZA=GX.RAZA, SEOSA=GX.SEOSA, RVO=GX.RVO, SVO=GX.SVO, MT=GX.MT;
@@ -201,8 +201,7 @@ else p.hp=0;
 }
 function log(m,c){var d=document.createElement('div');d.textContent=m;if(c)d.style.color=c;lg.appendChild(d);lg.scrollTop=lg.scrollHeight;}
 function isB(w){return w%BE===0;}
-/* БОССЫ: Ядро ×1.3/×2; MECHA ×1.25/×3; RAZOR — база MECHA+укл.15%; SEOSHI — база MECHA+атака ×1.15;
-   с 25 волны единый 15%-ролл: или Razor, или Seoshi (50/50) */
+/* БОССЫ: Ядро ×1.3/×2; MECHA ×1.25/×3; RAZOR — база MECHA+укл.15%; SEOSHI — база MECHA+атака ×1.15; с 25 волны единый 15%-ролл: или Razor, или Seoshi (50/50) */
 function mkE(){var w=st.wave;if(isB(w)){
 if(w>=25&&Math.random()<0.15){
 if(Math.random()<0.5){var sh2=Math.round((460+Math.floor(w/5)*240)*MECHA_HP);return[{n:'Seoshi',hp:sh2,mx:sh2,atk:Math.round((18+w*1.8)*MECHA_ATK*1.15),al:true,boss:true,seoshi:true,ssGhost:0,orchEva:0,cdOrch:0,cdQuiet:0,cdContr:0,cdMist:0,stun:0,bleed:0}];}
@@ -518,7 +517,6 @@ if(e.mecha){e.tn++;e.sh=0;if(e.tn%3===0){e.sh=0.4;log('MECHA-GALLEON: '+pk(MP.sh
 var t3=hh[rnd(0,hh.length-1)];var cE3=pt.querySelector('[data-uid="'+t3.idx+'"]');if(dodgeCheck(t3))return;if(t3.dgB>0&&Math.random()<0.75){log('💨 Дым спасает: '+t3.def.n+' уклонился!','#7cff9b');return;}if(!hitQ(82,t3.dd)){log(e.n+' промахнулся');return;}var d3n=enemyDmg(e,Math.round(e.atk+rnd(-2,3)));if(t3.crack>0)d3n=Math.round(d3n*1.2);t3.hp-=d3n;if(cE3){if(window.animateShake)window.animateShake(cE3);fl(cE3,'−'+d3n,'#dd4e60');var c3b=cc(cE3);burst(c3b.x,c3b.y,{count:8,color:'#dd4e60',speed:3});}sfx('hit');log(e.n+' → '+t3.def.n+': −'+d3n,e.boss?'#e8c060':'#dd4e60');if(t3.hp<=0){t3.hp=0;allyDeath(t3,false);}});
 st.party.forEach(function(p){fixHp(p);if(p.regen>0&&p.hp>0&&p.hp<p.mx){var ad=bheal(Math.round(rnd(28,42)*1.5));p.hp=Math.min(p.mx,p.hp+ad);healFx(p,ad);log('✚ Тик-лечение: '+p.def.n+' +'+ad,'#9fd18a');}});
 st.party.forEach(function(p){if(p.dgB>0)p.dgB--;if(p.reyDmg>0)p.reyDmg--;if(p.crB>0)p.crB--;if(p.skCd>0)p.skCd--;if(p.reyCd>0)p.reyCd--;if(p.virCd>0)p.virCd--;if(p.dodge>0)p.dodge--;if(p.crit100>0)p.crit100--;if(p.regen>0)p.regen--;if(p.burnT>0)p.burnT--;if(p.crack>0)p.crack--;if(p.bleedH>0)p.bleedH--;if(p.mark>0)p.mark--;if(p.hp>0)p.act=false;});
-/* СПИСАНИЕ ЭФФЕКТОВ ВРАГОВ: вкл. ssGhost (фикс вечной неуязвимости Seoshi) */
 st.en.forEach(function(e){if(e.virus>0)e.virus--;if(e.vuln>0)e.vuln--;if(e.stun>0)e.stun--;if(e.bleed>0)e.bleed--;if(e.sh7>0)e.sh7--;if(e.razEva>0)e.razEva--;if(e.orchEva>0)e.orchEva--;if(e.ssGhost>0)e.ssGhost--;});busy=false;if(lose())return;rd();}
 
 function lose(){if(st.party.every(function(h){fixHp(h);return h.hp<=0;})){st.over=true;mX();
