@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v19.0: + элитный босс Razor (уклонение 15%, лезвия крови, В яблочко, танец смерти, жнец, пожирание душ), APOFIS D-3/D-7, боссы усилены, опыт за MECHA 2500%, +5% отхил/уровень Alisa и Griffin, syncParty, крит на ульты, осколки смерти */
+/* Хроники Grey Empire v19.1: фиксы Razor (глитч на 32 сек, приветствие глохнет при смерти, 2500% опыта), APOFIS D-3/D-7 как замена врагов, боссы усилены, +5% отхил/уровень Alisa и Griffin, syncParty, крит на ульты, осколки смерти */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -66,7 +66,7 @@ var SK='grey_empire_rpg_v4',BE=5,UC=25,UM=1.8,MC=0.20,GRC=10,GRH=2.5,BOSS_ATK=1.
 var D7T={attack:['Ни шагу назад. Только вперёд.','Зачистка периметра в процессе.','Grey Empire на мушке.','Жду указаний… указания получены. Огонь!','Цель в зоне поражения. Работаю.','Приказ ясен: уничтожить. Выполняю.'],aim:['Навожу прицел… упреждение рассчитано.','Лазер захвачен. Через две секунды — выстрел.','Стабилизирую наведение… не двигайтесь.','Захват цели. Пуск разрешён?… Пуск разрешён.'],sup:['Подавляющий огонь! Всем стоять на месте!','Заливаю сектор огнём.','Периметр под контролем. Огонь на подавление!'],def:['Переходим к укреплённой обороне!','Удержать позицию любой ценой!','Броневые плиты активированы. Пробейте, если сможете.'],kill:['Цель уничтожена. Периметр чист.','Отряд Grey Empire ослаблен. Зачистка продолжается.','Фраг подтверждён. Следующая цель.'],death:['D-7… выбыл… запрос… подкреплени—','Дрон потух... связь потеряна.','Штурмовик D-7 отключён.']};
 /* Реплики APOFIS D-3 */
 var D3T={attack:['Держать темп. Периметр под контролем.','Скорость — моё оружие. Атакую!','Grey Empire в фокусе. Работаю по плану.','Фланг вскрыт. Двигаюсь на сближение.','Приказ не обсуждаем. Выполняю.'],dash:['Тактический рывок! Меня не достанут!','Маневр выполнен. Ищите меня!','Из зоны огня — в зону удара!'],shot:['Точный выстрел! Раскол гарантирован!','Одна цель. Один разлом.','Стреляю на опережение!'],knife:['Контратака! Нож ближе пули!','Сблизился — добиваю в упор!','Лезвие не знает промаха.'],kill:['Цель снята. Держу темп.','Периметр расчищается. Следующая.','Лёгкая добыча. Иду дальше.'],death:['D-3… скорость… отказ… свя—','Системы… не отвечаю…','Лёгкий штурмовик D-3 выведен из строя.']};
-/* Реплики RAZOR — элитный босс */
+/* Реплики RAZOR */
 var RZT={attack:['Grey Empire… как же я вас люблю!','Мои любимые куклы. Потанцуем!','Каждый удар — композиция. Аплодируйте!','Ваша боль — мой шедевр!','Grey Empire — мой смысл жизни! Ломаться так красиво!'],blade:['Лезвия крови! Пейте!','Два разреза. Один на память!','Кровь — лучший соус к спектаклю!'],apple:['В яблочко! Прямо в сердце!','Сто процентов. Ноль пощады!','Прицел не нужен. Я чувствую кукол!'],dance:['Танец смерти! Попробуйте достать меня!','Кружись, кружись, куколка!','Не достанете. Никто не достаёт!'],reap:['Я — ваш жнец! Ха-ха-ха!','Самый хрупкий — умирает первым!','Кого же мне выбрать… этого! Ха-ха!'],kill:['Ещё кукла сломана! Какая жалость… ахахаха!','Обожаю этот хруст! Спасибо за ужин!','Grey Empire — смысл моей жизни! Такие ломкие!','Аплодисменты! Аплодисменты! Какой финал!'],death:['Что… нет… мои… куклы…','Развлекались… славно… до встре—','Немыслимо… меня… переиграли…']};
 /* кровавый глитч-оверлей Razor */
 function razGlitch(txt,ms){try{
@@ -184,10 +184,20 @@ if(w>=25&&Math.random()<0.15){var rh=Math.round((460+Math.floor(w/5)*240)*MECHA_
 if(Math.random()<MC){var mh=Math.round((460+Math.floor(w/5)*240)*MECHA_HP);return[{n:'MECHA-GALLEON',hp:mh,mx:mh,atk:Math.round((18+w*1.8)*MECHA_ATK),al:true,boss:true,mecha:true,sh:0,tn:0,stun:0,bleed:0}];}
 var hp=Math.round((280+Math.floor(w/5)*140)*BOSS_HP);return[{n:'Apofis — Ядро',hp:hp,mx:hp,atk:Math.round((16+w*1.8)*BOSS_ATK),al:true,boss:true,stun:0,bleed:0}];}
 var c=Math.min(2+Math.floor(w/2),5),L=[],N=['Агент Apofis','Юнит Осколок','Оперативник','Кибер-глашатай','Элитный Каратель'];for(var i=0;i<c;i++){var h2=40+w*12+rnd(0,12);L.push({n:N[rnd(0,4)],hp:h2,mx:h2,atk:9+w*1.5,al:true,stun:0,bleed:0});}
+/* D-7: ЗАМЕНЯЮТ обычных врагов, пул не превышает 5 карточек */
 if(w>=10){var d7max=(w>=50)?2:1,d7ch=(w>=20)?0.20:(w>=15)?0.15:0.10;
-for(var d7i=0;d7i<d7max;d7i++){if(Math.random()<d7ch){var d7hp=Math.round((40+w*12+12)*1.25);L.push({n:'APOFIS D-7',hp:d7hp,mx:d7hp,atk:Math.round((9+w*1.5)*1.05),al:true,stun:0,bleed:0,d7:true,sh7:0,cdAim:0,cdSup:0,cdDef:0});log('⚠ В периметр входит средний штурмовик APOFIS D-7!','#e07a30');log('D-7: «'+pk(D7T.attack,'d7a')+'»','#e07a30');}}}
+for(var d7i=0;d7i<d7max;d7i++){if(Math.random()<d7ch&&L.length>0){
+var rep7=Math.floor(Math.random()*L.length);
+var d7hp=Math.round((40+w*12+12)*1.25);
+L[rep7]={n:'APOFIS D-7',hp:d7hp,mx:d7hp,atk:Math.round((9+w*1.5)*1.05),al:true,stun:0,bleed:0,d7:true,sh7:0,cdAim:0,cdSup:0,cdDef:0};
+log('⚠ В периметр входит средний штурмовик APOFIS D-7!','#e07a30');log('D-7: «'+pk(D7T.attack,'d7a')+'»','#e07a30');}}}
+/* D-3: ЗАМЕНЯЮТ обычных врагов, пул не превышает 5 карточек */
 if(w>=10){var d3max=(w>=50)?2:1,d3ch=(w>=20)?0.20:(w>=15)?0.15:0.10;
-for(var d3i=0;d3i<d3max;d3i++){if(Math.random()<d3ch){var d3hp=Math.round((40+w*12+6)*1.10);L.push({n:'APOFIS D-3',hp:d3hp,mx:d3hp,atk:Math.round((9+w*1.5)*1.05),al:true,stun:0,bleed:0,d3:true,dash:0,cdShot:0,cdKnife:0});log('⚠ В периметр входит лёгкий штурмовик APOFIS D-3!','#c9a34a');log('D-3: «'+pk(D3T.attack,'d3a')+'»','#c9a34a');}}}
+for(var d3i=0;d3i<d3max;d3i++){if(Math.random()<d3ch&&L.length>0){
+var rep3=Math.floor(Math.random()*L.length);
+var d3hp=Math.round((40+w*12+6)*1.10);
+L[rep3]={n:'APOFIS D-3',hp:d3hp,mx:d3hp,atk:Math.round((9+w*1.5)*1.05),al:true,stun:0,bleed:0,d3:true,dash:0,cdShot:0,cdKnife:0};
+log('⚠ В периметр входит лёгкий штурмовик APOFIS D-3!','#c9a34a');log('D-3: «'+pk(D3T.attack,'d3a')+'»','#c9a34a');}}}
 return L;}
 function arm(e,d){if(e&&e.mecha&&e.sh>0)d=Math.round(d*0.6);if(e&&e.d7&&e.sh7>0)d=Math.max(1,Math.round(d*0.7));return Math.max(1,d);}
 function dmgTo(e,d){if(e&&e.vuln>0)d=Math.round(d*1.3);return d;}
@@ -204,14 +214,20 @@ if(forceG||roll<0.34){var g=mkG();st.party.push(g);__gxGuestsSinceGriffin=0;st.g
 }
 if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.gx3-bell,.gx3-griffin,.gx3-rey');if(c)window.animateBellAppear(c);},150);}}}
 
-/* приветствие и сцены Razor при появлении */
+/* приветствие Razor: звук хранится глобально — глохнет при его смерти; глитч на 32-й секунде */
 function razIntro(){try{
-say(RVO,0.75);
+var rzAu=new Audio(RVO);rzAu.volume=0.75;rzAu.preload='auto';
+window.__razVoice=rzAu;
+var n=0;
+function go(){n++;var p=rzAu.play();if(p&&p.catch)p.catch(function(){if(n<3)document.addEventListener('pointerdown',go,{once:true});});}
+go();
 razGlitch('ОПАСНОСТЬ!',3000);
 log('☠ РАЗОР ВЫШЕЛ НА ОХОТУ!','#ff0033');
 log('Razor: «'+pk(RZT.attack,'rz0')+'»','#ff0033');
-setTimeout(function(){razGlitch('Попробуй выжить!',2000);},26000);
+setTimeout(function(){razGlitch('Попробуй выжить!',2000);},32000);
 }catch(e){}}
+/* глушим приветствие Razor */
+function razKillVoice(){try{if(window.__razVoice){window.__razVoice.pause();window.__razVoice.currentTime=0;window.__razVoice=null;}}catch(e){}}
 
 function nb(k){var s=k?sv.maxWave:1;st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0,reyDmg:0,skCd:0,crB:0,shSt:0,dodge:0,crit100:0,regen:0,healB:0,burnT:0,crack:0,bleedH:0};}),en:[],over:false,bA:false,bJ:false,gJ:false,rJ:false,firstDeath:false};st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;var rz0=st.en[0]&&st.en[0].razor;if(m0)mE2();if(rz0)razIntro();tryB();sel=tg=null;busy=false;lg.innerHTML='';rs.classList.add('hidden');if(!m0&&!rz0){if(isB(st.wave))log('⚠ БОСС! Ядро Apofis!','#e8c060');else log('Волна '+st.wave,'#e8c060');}rd();}
 function aE(){return st.en.filter(function(e){return e.al;});}
@@ -234,16 +250,17 @@ function hitQ(a,dd){return Math.random()*100<Math.max(8,Math.min(95,a-dd*0.5));}
 function dmg(b,c,cm){var d=b,crit=Math.random()*100<(c+(gxBuff()==='critd'?20:0));if(crit)d=Math.round(d*(cm/100));return{d:d,crit:crit};}
 function bdmg(base){return gxBuff()==='dmg'?Math.round(base*1.3):base;}
 function ucr(){return Math.random()*100<UC;}
+/* ОПЫТ: MECHA и RAZOR — 2500%, босс — 500%, рядовой — 100% */
 function kill(e){e.hp=0;e.al=false;
 var el=en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]');
 shatterFx(el);
 if(e.d7)log('D-7: «'+pk(D7T.death,'d7x')+'»','#e07a30');
 if(e.d3)log('D-3: «'+pk(D3T.death,'d3x')+'»','#c9a34a');
-if(e.razor){log('Razor: «'+pk(RZT.death,'rzx')+'»','#ff0033');log('☠ ЭЛИТНЫЙ БОСС RAZOR ПОВЕРЖЕН!','#ffd700');}
+if(e.razor){log('Razor: «'+pk(RZT.death,'rzx')+'»','#ff0033');log('☠ ЭЛИТНЫЙ БОСС RAZOR ПОВЕРЖЕН!','#ffd700');razKillVoice();}
 if(__gxKill&&__gxKill.idx>=0&&__gxKill.idx<4){
-var bonus=__gxKill.mecha?75:(__gxKill.boss?15:3);
+var bonus=(__gxKill.mecha||__gxKill.razor)?75:(__gxKill.boss?15:3);
 sv.xp[__gxKill.idx]+=bonus;
-log('★ '+HR[__gxKill.idx].n+' получает бонус опыта +'+(__gxKill.mecha?'2500%':(__gxKill.boss?'500%':'100%'))+' за убийство!',(__gxKill.boss||__gxKill.mecha)?'#ffd700':'#9fd18a');
+log('★ '+HR[__gxKill.idx].n+' получает бонус опыта +'+((__gxKill.mecha||__gxKill.razor)?'2500%':(__gxKill.boss?'500%':'100%'))+' за убийство!',(__gxKill.boss||__gxKill.mecha||__gxKill.razor)?'#ffd700':'#9fd18a');
 __gxKill=null;
 }
 if(e.mecha)log('MECHA-GALLEON: '+pk(MP.df,'mdf'),'#c08bff');}
@@ -255,7 +272,7 @@ if(window.gxMeta){
 if(h.def&&h.def.n==='Sky'&&st.wave<=20)window.gxMeta.skyDeaths20=(window.gxMeta.skyDeaths20||0)+1;
 if(killerMecha&&h.def&&h.def.n==='Alisa'&&!st.firstDeath&&!window.gxMeta.alisaFirstBlood){window.gxMeta.alisaFirstBlood=true;log('💀 «Alisa OneShot» — MECHA-GALLEON выбрал первую жертву...','#c08bff');say(AVO,0.7);}
 }
-/* Razor: пожирание душ — +25% HP и зубы акулы */
+/* Razor: пожирание душ — +25% HP, зубы акулы */
 try{var rz2=st.en.find(function(x){return x.al&&x.razor;});
 if(rz2){rz2.hp=Math.min(rz2.mx,Math.round(rz2.hp+rz2.mx*0.25));
 log('Razor: «'+pk(RZT.kill,'rzk')+'»','#ff0033');
@@ -432,9 +449,7 @@ if(tgt3.hp<=0){tgt3.hp=0;allyDeath(tgt3,false);}
 return;}
 /* ===== RAZOR ===== */
 if(e.razor){if(e.cdBlade>0)e.cdBlade--;if(e.cdApple>0)e.cdApple--;if(e.cdDance>0)e.cdDance--;if(e.cdReap>0)e.cdReap--;
-/* Танец смерти: 80% уклонение до следующего хода, КД 2 */
 if(e.cdDance<=0&&Math.random()<0.5){e.cdDance=2;e.razEva=1;log('Razor: «'+pk(RZT.dance,'rzd')+'»','#ff0033');log('💃 Razor: Танец смерти! 80% уклонения до следующего хода','#ff0033');return;}
-/* Я твой жнец: слабейший герой, 2 удара + запрет хода, КД 4 */
 if(e.cdReap<=0&&Math.random()<0.4){e.cdReap=4;log('Razor: «'+pk(RZT.reap,'rzr')+'»','#ff0033');var wk=hh.slice().sort(function(a,b){return a.hp-b.hp;})[0];
 wk.stun=1;log('☠ '+wk.def.n+' скован ужасом: пропустит ход!','#ff0033');
 (function(t){for(var ri=0;ri<2;ri++){(function(ii){setTimeout(function(){try{
@@ -446,11 +461,8 @@ if(cR){if(window.animateShake)window.animateShake(cR);fl(cR,'☠−'+dR,'#ff0033
 log('☠ Жнец (удар '+(ii+1)+'/2) → '+t.def.n+': −'+dR,'#ff0033');
 if(t.hp<=0){t.hp=0;allyDeath(t,false);}
 rd();}catch(e9){}},ii*600);})(ri);}})(wk);sfx('ult');return;}
-/* Лезвия крови: 2 цели 80% + кровотечение 50%/ход, КД 3 */
 if(e.cdBlade<=0&&Math.random()<0.35){e.cdBlade=3;log('Razor: «'+pk(RZT.blade,'rzb')+'»','#ff0033');hh.slice(0,2).forEach(function(tB){if(dodgeCheck(tB))return;if(tB.dgB>0&&Math.random()<0.75){log('💨 Дым спасает: '+tB.def.n+' уклонился!','#7cff9b');return;}var dB=enemyDmg(e,Math.round(e.atk*0.8));if(tB.crack>0)dB=Math.round(dB*1.2);tB.hp-=dB;tB.bleedH=2;var cB=pt.querySelector('[data-uid="'+tB.idx+'"]');if(cB){if(window.animateShake)window.animateShake(cB);fl(cB,'🩸−'+dB,'#ff3355');}log('🩸 Лезвия крови → '+tB.def.n+': −'+dB+' (кровотечение, 2 хода)','#ff0033');if(tB.hp<=0){tB.hp=0;allyDeath(tB,false);}});sfx('hit');return;}
-/* В яблочко: 100% попадание, 150% + 30% крит, КД 3 */
 if(e.cdApple<=0){e.cdApple=3;log('Razor: «'+pk(RZT.apple,'rza')+'»','#ff0033');var tA=hh[rnd(0,hh.length-1)];var dA=Math.round(enemyDmg(e,Math.round(e.atk*1.5)));var ca=Math.random()*100<30;if(ca){dA=Math.round(dA*1.5);log('🎯 КРИТ! В самое сердце!','#ff4d6d');}if(tA.crack>0)dA=Math.round(dA*1.2);tA.hp-=dA;var cA=pt.querySelector('[data-uid="'+tA.idx+'"]');if(cA){if(window.animateShake)window.animateShake(cA);fl(cA,'🎯−'+dA,'#ff0033',ca);}log('🎯 В яблочко! → '+tA.def.n+': −'+dA+(ca?' КРИТ':''),'#ff0033');if(tA.hp<=0){tA.hp=0;allyDeath(tA,false);}sfx('hit');return;}
-/* обычная атака */
 log('Razor: «'+pk(RZT.attack,'rzt')+'»','#ff0033');
 var tz=hh[rnd(0,hh.length-1)];if(dodgeCheck(tz))return;if(tz.dgB>0&&Math.random()<0.75){log('💨 Дым спасает: '+tz.def.n+' уклонился!','#7cff9b');return;}
 var dZ=enemyDmg(e,Math.round(e.atk+rnd(-2,3)));if(tz.crack>0)dZ=Math.round(dZ*1.2);tz.hp-=dZ;var cZ=pt.querySelector('[data-uid="'+tz.idx+'"]');if(cZ){if(window.animateShake)window.animateShake(cZ);fl(cZ,'−'+dZ,'#ff0033');}sfx('hit');log('Razor → '+tz.def.n+': −'+dZ,'#ff0033');
