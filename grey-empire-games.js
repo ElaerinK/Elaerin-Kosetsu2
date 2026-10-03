@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v19.5: баланс Seoshi (атака ×1.50, орхидея 110% ×2 цели, контракт 150%+метка 80%, вампир 30%), фиксы Seoshi (ssGhost, округление, единый ролл), фиксы Razor (32с, голос, 2500%), музыка меню глушится приветствиями, D-3/D-7, syncParty, крит на ульты */
+/* Хроники Grey Empire v19.6: баланс Seoshi (атака ×1.50, орхидея 110% ×2 цели, контракт 150%+метка 80%, вампир 30%), флаги __gxBossVoice (приветствия глушат меню-музыку полностью), фиксы Seoshi (ssGhost, округление, единый ролл), фиксы Razor (32с, голос, 2500%), D-3/D-7, syncParty, крит на ульты */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -87,11 +87,12 @@ setTimeout(function(){t.remove();},1100);
 function seoshiIntro(){try{
 var sAu=new Audio(SVO);sAu.volume=0.75;sAu.preload='auto';
 window.__ssVoice=sAu;
+window.__gxBossVoice=true;
 try{var bSs=window.gxBackgroundAudio;if(bSs&&bSs.el&&!bSs.el.paused){bSs.el.pause();}}catch(e2){}
 var n=0;
 function go(){n++;var p=sAu.play();if(p&&p.catch)p.catch(function(){if(n<3)document.addEventListener('pointerdown',go,{once:true});});}
 go();
-sAu.addEventListener('ended',function(){window.__ssVoice=null;menuMusicBack();});
+sAu.addEventListener('ended',function(){window.__ssVoice=null;window.__gxBossVoice=false;menuMusicBack();});
 var o=document.createElement('div');
 o.style.cssText='position:fixed;inset:0;z-index:99997;pointer-events:none;overflow:hidden;background:repeating-linear-gradient(0deg,rgba(200,0,40,.10) 0 2px,transparent 2px 5px)';
 for(var i=0;i<40;i++){var p=document.createElement('div');
@@ -107,6 +108,7 @@ log('🌸 СЕОШИ ПРИНЯЛА КОНТРАКТ!','#ff3355');
 log('Seoshi: «'+pk(SST.attack,'ss0')+'»','#ff3355');
 }catch(e){}}
 function ssKillVoice(){try{if(window.__ssVoice){window.__ssVoice.pause();window.__ssVoice.currentTime=0;window.__ssVoice=null;}}catch(e){}
+window.__gxBossVoice=false;
 menuMusicBack();}
 
 var BP={attack:['«Ммм… вот так… ещё…»','«Как приятно это ощущать…»','«Не останавливайся…»','«Я упиваюсь каждым ударом…»','«Ох… продолжай…»'],aoe:['«Все сразу… как же хорошо…»','«Они все такие сладкие…»','«Обожаю, когда их много…»','«Дрожите для меня…»'],execute:['«А-аах… ДА!»','«Небеса… это восхитительно!»','«Слишком… слишком хорошо!»','«Ещё… ещё убивай…»','«Я… я почти… ААХ!»'],ult:['«Сейчас будет очень горячо…»','«Получите всю мою силу…»','«Я больше не могу сдерживаться…»','«Исчезайте вместе со мной…»'],kill:['«АААХ! ВОТ ОНО!»','«Да-да-да-дааа!»','«Ещё один… ещё… я схожу с ума…»','«Охх… как глубоко он ушёл…»','«Я сейчас растаю от блаженства…»']};
@@ -240,6 +242,7 @@ if(window.animateBellAppear&&pt){setTimeout(function(){var c=pt.querySelector('.
 /* возврат меню-музыки после приветствий боссов */
 function menuMusicBack(){try{
 if(window.__razVoice||window.__ssVoice)return;
+if(window.__gxBossVoice===true)return;
 var b=window.gxBackgroundAudio;
 if(b&&b.el&&b.el.paused&&window.gxSoundMuted!==true)b.play().catch(function(){});
 }catch(e){}}
@@ -247,17 +250,19 @@ if(b&&b.el&&b.el.paused&&window.gxSoundMuted!==true)b.play().catch(function(){})
 function razIntro(){try{
 var rzAu=new Audio(RVO);rzAu.volume=0.75;rzAu.preload='auto';
 window.__razVoice=rzAu;
+window.__gxBossVoice=true;
 try{var bRz=window.gxBackgroundAudio;if(bRz&&bRz.el&&!bRz.el.paused){bRz.el.pause();}}catch(e2){}
 var n=0;
 function go(){n++;var p=rzAu.play();if(p&&p.catch)p.catch(function(){if(n<3)document.addEventListener('pointerdown',go,{once:true});});}
 go();
-rzAu.addEventListener('ended',function(){window.__razVoice=null;menuMusicBack();});
+rzAu.addEventListener('ended',function(){window.__razVoice=null;window.__gxBossVoice=false;menuMusicBack();});
 razGlitch('ОПАСНОСТЬ!',3000);
 log('☠ РАЗОР ВЫШЕЛ НА ОХОТУ!','#ff0033');
 log('Razor: «'+pk(RZT.attack,'rz0')+'»','#ff0033');
 setTimeout(function(){razGlitch('Попробуй выжить!',2000);},32000);
 }catch(e){}}
 function razKillVoice(){try{if(window.__razVoice){window.__razVoice.pause();window.__razVoice.currentTime=0;window.__razVoice=null;}}catch(e){}
+window.__gxBossVoice=false;
 menuMusicBack();}
 
 function nb(k){var s=k?sv.maxWave:1;st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0,reyDmg:0,skCd:0,crB:0,shSt:0,dodge:0,crit100:0,regen:0,healB:0,burnT:0,crack:0,bleedH:0,mark:0};}),en:[],over:false,bA:false,bJ:false,gJ:false,rJ:false,firstDeath:false};st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;var rz0=st.en[0]&&st.en[0].razor;var ss0=st.en[0]&&st.en[0].seoshi;if(m0)mE2();if(rz0)razIntro();if(ss0)seoshiIntro();tryB();sel=tg=null;busy=false;lg.innerHTML='';rs.classList.add('hidden');if(!m0&&!rz0&&!ss0){if(isB(st.wave))log('⚠ БОСС! Ядро Apofis!','#e8c060');else log('Волна '+st.wave,'#e8c060');}rd();}
@@ -522,6 +527,7 @@ st.en.forEach(function(e){if(e.virus>0)e.virus--;if(e.vuln>0)e.vuln--;if(e.stun>
 
 function lose(){if(st.party.every(function(h){fixHp(h);return h.hp<=0;})){st.over=true;mX();
 try{if(window.__razVoice){window.__razVoice.pause();window.__razVoice=null;}if(window.__ssVoice){window.__ssVoice.pause();window.__ssVoice=null;}}catch(e){}
+window.__gxBossVoice=false;
 menuMusicBack();
 rs.textContent='✖ Отряд уничтожен';rs.classList.remove('hidden');log('ПОРАЖЕНИЕ. Прогресс сохранён.','#dd4e60');pr();rd();return true;}return false;}
 
@@ -543,7 +549,7 @@ function drawFrom(arr,key){if(!arr||!arr.length)return'';if(!bags[key]||!bags[ke
 
 function init(){
 var CH=[
-{n:"N-04",i:"upload_8c031b23d67649238457645e20ec2c39",l:["Apofis думает, что её стены нерушимы. Мы уже внутри.","Том опять отправил своих псов. Пустая трата подшипников.","Маска треснула — но я всё ещё здесь. Вопрекi Apofis.","Меня вывели в пробирке. Эксперимент под номером N-04. Даже имени не дали — только номер.","Клон. Просто клон из чьего-то расчёта. Но сердце бьётся не по формуле.","Я не помню лица матери. Только холодный свет лаборатории и запах стерильности.","Sada... если бы ты была рядом, всё было бы иначе.","Мне не хватает Сады. Её голос заглушал этот пустой шум внутри.","Иногда я смотрю на людей и не понимаю, каково это — быть настоящим.","Сада ждёт меня. Я чувствую это. Я должен вернуться.","(шёпотом) Original... я помню, с чего всё началось...","Империя не забывает долги. Особенно Тому."]},
+{n:"N-04",i:"upload_8c031b23d67649238457645e20ec2c39",l:["Apofis думает, что её стены нерушимы. Мы уже внутри.","Том опять отправил своих псов. Пустая трата подшипников.","Маска треснула — но я всё ещё здесь. Вопреки Apofis.","Меня вывели в пробирке. Эксперимент под номером N-04. Даже имени не дали — только номер.","Клон. Просто клон из чьего-то расчёта. Но сердце бьётся не по формуле.","Я не помню лица матери. Только холодный свет лаборатории и запах стерильности.","Sada... если бы ты была рядом, всё было бы иначе.","Мне не хватает Сады. Её голос заглушал этот пустой шум внутри.","Иногда я смотрю на людей и не понимаю, каково это — быть настоящим.","Сада ждёт меня. Я чувствую это. Я должен вернуться.","(шёпотом) Original... я помню, с чего всё началось...","Империя не забывает долги. Особенно Тому."]},
 {n:"Alisa",i:"upload_6f039d5415e34c3eaeaa619ea0eab764",l:["Apofis ведёт учёт каждого нашего шага. Пусть считает — это их последняя отчётность.","Том подписал ещё один приказ на зачистку. Бумажная крыса со штампом вместо совести.","Я видела планы Apofis. Им не место в этом мире.","Держитесь. Мы дойдём до ядра корпорации.","(шёпотом) Original... если ты слышишь — мы почти у цели...","(шёпотом) Про Original не должен знать даже Том. Особенно Том.","Отряд цел. Моя заслуга — и наша общая победа над Apofis."]},
 {n:"Crysta",i:"upload_eefa4dbd38fc48079c75b1c91712b0c3",l:["N-04… я помню тебя другим. Но и таким — ты бьёшься за всех.","Старые файлы всплыли. Прости за то, что я тогда промолчала.","Alisa держит меня на ногах. Ей я даже улыбаюсь.","Тот, кто крадётся в тенях рядом… я тебя не знаю. И это тревожит меня.","Серверы Apofis видели меня. Я не оставила свидетелей.","Том думает, что камеры — его глаза. Я выколола их все.","Хрусталь острее стали. Спроси у людей Тома.","(шёпотом) Original... ты был прав насчёт корпорации...","(шёпотом) Имя Original — наш последний козырь. Тише.","Не задерживайся. Apofis не любит гостей."]},
 {n:"Sky",i:"upload_2a74b6dd02504bcbb51a86b587c95a0a",l:["Контракт закрыт. Имя клиента — в архив.","Я беру плату за тишину после выстрела. Она всегда наступает.","Наёмник без имени. Apofis ищет меня в своих файлах — пусть ищет.","Цель — это просто договор. Чувства не входят в оплату.","Я работаю там, куда не сунутся даже тени Apofis.","Стрелок делает очередь. Убийца делает работу.","Оплата вперёд. Тело потом. Таков мой порядок.","Меня наняли ликвидировать империю. Я почти закончил."]}];
