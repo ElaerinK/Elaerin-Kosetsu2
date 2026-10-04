@@ -1,4 +1,4 @@
-/* Хроники Grey Empire v19.6: баланс Seoshi (атака ×1.50, орхидея 110% ×2 цели, контракт 150%+метка 80%, вампир 30%), флаги __gxBossVoice (приветствия глушат меню-музыку полностью), фиксы Seoshi (ssGhost, округление, единый ролл), фиксы Razor (32с, голос, 2500%), D-3/D-7, syncParty, крит на ульты */
+/* Хроники Grey Empire v19.7: результаты волн пишутся ТОЛЬКО при гибели всего отряда; баланс Seoshi (атака ×1.50, орхидея 110% ×2, контракт 150%+метка 80%, вампир 30%), флаги __gxBossVoice, фиксы Razor (32с, голос, 2500%), D-3/D-7, syncParty, крит на ульты */
 (function(){
 if(window.__GRE_EMPIRE_LOADED)return;
 window.__GRE_EMPIRE_LOADED=true;
@@ -265,6 +265,20 @@ function razKillVoice(){try{if(window.__razVoice){window.__razVoice.pause();wind
 window.__gxBossVoice=false;
 menuMusicBack();}
 
+/* Запись результата в рейтинг — ТОЛЬКО при гибели всего отряда */
+function reportWaves(){
+try{
+var wF=st.wave;
+sv.maxWave=Math.max(sv.maxWave,wF);pr();
+try{var NM=localStorage.getItem('gx_player_name')||'Игрок',B=(+localStorage.getItem('gx_waves_best')||0);
+if(wF>B)localStorage.setItem('gx_waves_best',String(wF));
+fetch('https://api.jsonbin.io/v3/b/6ab4252dac6210605aee29c9/latest',{headers:{'X-Master-Key':'$2a$10$7ZoTk/UmrtGsU6koso/u0ebOyRKk9rBDuefKQV2auxykZw5SHQzCS'}}).then(function(r){return r.json();}).then(function(d){
+var rec=d.record||{};if(typeof rec==='string')rec={};if(!rec.waves)rec.waves=[];
+rec.waves.push({name:NM,waves:wF});rec.waves.sort(function(a,b){return b.waves-a.waves;});rec.waves=rec.waves.slice(0,10);
+return fetch('https://api.jsonbin.io/v3/b/6ab4252dac6210605aee29c9',{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':'$2a$10$7ZoTk/UmrtGsU6koso/u0ebOyRKk9rBDuefKQV2auxykZw5SHQzCS'},body:JSON.stringify(rec)});}).catch(function(){});}catch(e2){}
+}catch(e){}
+}
+
 function nb(k){var s=k?sv.maxWave:1;st={wave:s,party:HR.map(function(h,i){var x=hs(i);return{def:h,idx:i,hp:x.hp,mx:x.hp,atk:x.atk,cr:x.cr,cd2:x.cd,ac:x.ac,dd:x.dd,act:false,uc:0,bell:false,dgB:0,reyDmg:0,skCd:0,crB:0,shSt:0,dodge:0,crit100:0,regen:0,healB:0,burnT:0,crack:0,bleedH:0,mark:0};}),en:[],over:false,bA:false,bJ:false,gJ:false,rJ:false,firstDeath:false};st.en=mkE();var m0=st.en[0]&&st.en[0].mecha;var rz0=st.en[0]&&st.en[0].razor;var ss0=st.en[0]&&st.en[0].seoshi;if(m0)mE2();if(rz0)razIntro();if(ss0)seoshiIntro();tryB();sel=tg=null;busy=false;lg.innerHTML='';rs.classList.add('hidden');if(!m0&&!rz0&&!ss0){if(isB(st.wave))log('⚠ БОСС! Ядро Apofis!','#e8c060');else log('Волна '+st.wave,'#e8c060');}rd();}
 function aE(){return st.en.filter(function(e){return e.al;});}
 function aH(){return st.party.filter(function(h){return h.hp>0;});}
@@ -424,7 +438,7 @@ st.party.forEach(function(p){if(p.hp>0&&!p.bell&&!p.griffin&&!p.rey){var i=p.idx
 var ns2=starsOf(sv.levels[i]);if(ns2>prevStars[i]){p.mx=Math.round(HR[i].hp*starMul(ns2))+(sv.levels[i]-1)*30;p.hp=p.mx;p.atk=Math.round(HR[i].atk*starMul(ns2)*10)/10+(sv.levels[i]-1)*4;p.cd2=HR[i].cd+(sv.levels[i]-1)*2;p.healB=healBonusOf(p);log('✦ '+HR[i].n+' получает '+ns2+'★! Характеристики ×'+starMul(ns2),'#ffd700');}}}});
 pr();if(!aE().length){rd();setTimeout(wc,700);return;}if(lose())return;var left=st.party.filter(function(p){return p.hp>0&&!p.act;});if(left.length===0){busy=true;rd();setTimeout(et,850);}else rd();});
 
-function wc(){log('Волна '+st.wave+' зачищена!','#e8c060');mX();menuMusicBack();try{var AK='grey_empire_achv',AS=JSON.parse(localStorage.getItem(AK)||'{}');var cleared=st.wave;if(cleared>=1&&!AS.ach1){AS.ach1=true;if(typeof window.showAch==='function')window.showAch({n:'Новичок на поле боя!',d:'Пройдена первая волна'});}if(cleared>=5&&!AS.ach2){AS.ach2=true;if(typeof window.showAch==='function')window.showAch({n:'Рядовой вояка!',d:'Пройдено пять волн'});}AS.maxCleared=Math.max(AS.maxCleared||0,cleared);localStorage.setItem(AK,JSON.stringify(AS));}catch(e){}if(st.bA){log('Гость растворяется в тени...','#e8a0ff');}st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});st.bA=false;sv.maxWave=Math.max(sv.maxWave,st.wave+1);pr();st.wave++;st.en=mkE();var m1=st.en[0]&&st.en[0].mecha;var rz1=st.en[0]&&st.en[0].razor;var ss1=st.en[0]&&st.en[0].seoshi;if(m1)mE2();if(rz1)razIntro();if(ss1)seoshiIntro();st.party.forEach(function(p){fixHp(p);var lv=sv.levels[p.idx]||1;if(p.hp>0&&isFinite(p.hp)){p.hp=Math.min(p.mx,p.hp+16+lv*2);p.act=false;p.dgB=0;p.reyDmg=0;p.skCd=0;p.crB=0;p.dodge=0;p.crit100=0;p.regen=0;p.burnT=0;p.crack=0;p.bleedH=0;p.mark=0;}});syncParty();tryB();if(!m1&&!rz1&&!ss1&&isB(st.wave))log('⚠ Приближается БОСС!','#e8c060');rd();busy=true;setTimeout(et,1100);}
+function wc(){log('Волна '+st.wave+' зачищена!','#e8c060');mX();menuMusicBack();try{var AK='grey_empire_achv',AS=JSON.parse(localStorage.getItem(AK)||'{}');var cleared=st.wave;if(cleared>=1&&!AS.ach1){AS.ach1=true;if(typeof window.showAch==='function')window.showAch({n:'Новичок на поле боя!',d:'Пройдена первая волна'});}if(cleared>=5&&!AS.ach2){AS.ach2=true;if(typeof window.showAch==='function')window.showAch({n:'Рядовой вояка!',d:'Пройдено пять волн'});}AS.maxCleared=Math.max(AS.maxCleared||0,cleared);localStorage.setItem(AK,JSON.stringify(AS));}catch(e){}if(st.bA){log('Гость растворяется в тени...','#e8a0ff');}st.party=st.party.filter(function(p){return!p.bell&&!p.griffin&&!p.rey;});st.bA=false;st.wave++;st.en=mkE();var m1=st.en[0]&&st.en[0].mecha;var rz1=st.en[0]&&st.en[0].razor;var ss1=st.en[0]&&st.en[0].seoshi;if(m1)mE2();if(rz1)razIntro();if(ss1)seoshiIntro();st.party.forEach(function(p){fixHp(p);var lv=sv.levels[p.idx]||1;if(p.hp>0&&isFinite(p.hp)){p.hp=Math.min(p.mx,p.hp+16+lv*2);p.act=false;p.dgB=0;p.reyDmg=0;p.skCd=0;p.crB=0;p.dodge=0;p.crit100=0;p.regen=0;p.burnT=0;p.crack=0;p.bleedH=0;p.mark=0;}});syncParty();tryB();if(!m1&&!rz1&&!ss1&&isB(st.wave))log('⚠ Приближается БОСС!','#e8c060');rd();busy=true;setTimeout(et,1100);}
 
 function et(){if(st.over){busy=false;rd();return;}var es=aE();if(!aH().length){busy=false;rd();return;}
 st.en.forEach(function(e){if(e.al&&e.bleed>0){var src=st.party.find(function(p){return p.def&&p.def.n==='N-04'&&p.hp>0;});var bd=src?Math.round(src.atk):14;e.hp-=bd;var eB=en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]');if(eB)fl(eB,'🩸−'+bd,'#ff2a46');log('🩸 Кровотечение по '+e.n+': −'+bd,'#dd4e60');if(e.hp<=0){e.hp=0;e.al=false;shatterFx(en.querySelector('[data-eid="'+st.en.indexOf(e)+'"]'));log(e.n+' истёк кровью!','#dd4e60');}}});
@@ -529,7 +543,8 @@ function lose(){if(st.party.every(function(h){fixHp(h);return h.hp<=0;})){st.ove
 try{if(window.__razVoice){window.__razVoice.pause();window.__razVoice=null;}if(window.__ssVoice){window.__ssVoice.pause();window.__ssVoice=null;}}catch(e){}
 window.__gxBossVoice=false;
 menuMusicBack();
-rs.textContent='✖ Отряд уничтожен';rs.classList.remove('hidden');log('ПОРАЖЕНИЕ. Прогресс сохранён.','#dd4e60');pr();rd();return true;}return false;}
+reportWaves();
+rs.textContent='✖ Отряд уничтожен — результат записан: волна '+st.wave;rs.classList.remove('hidden');log('ПОРАЖЕНИЕ. Результат: волна '+st.wave+' (записана в рейтинг)','#dd4e60');pr();rd();return true;}return false;}
 
 if($('vrpg3-btnReset'))$('vrpg3-btnReset').onclick=function(){nb(true);};
 if($('vrpg3-btnWipe'))$('vrpg3-btnWipe').onclick=function(){if(!confirm('Сбросить прогресс?'))return;sv={levels:[1,1,1,1],xp:[0,0,0,0],maxWave:1};pr();mX();__gxGuestsSinceGriffin=0;nb(false);};
