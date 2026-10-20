@@ -493,7 +493,7 @@ var ssAl=es.find(function(e){return e.seoshi&&e.al;});
 if(ssAl){st.party.forEach(function(p){if(p.mark>0&&p.hp>0){var bM=Math.round(ssAl.atk*0.8);bM=sAbs(p,bM);p.hp-=bM;var cM2=pt.querySelector('[data-uid="'+p.idx+'"]');if(cM2)fl(cM2,'📜−'+bM,'#ff3355');log('📜 Контракт истекает: '+p.def.n+' −'+bM,'#ff3355');if(p.hp<=0){p.hp=0;allyDeath(p,false);}}});}
 es.forEach(function(e){var hh=aH();if(!hh.length)return;
 /* Агрессивный зов Leon: весь урон врагов идёт в него */
-if(st.tzT>0){var tzH=st.party.find(function(p){return p.leon&&p.hp>0;});if(tzH&&hh.indexOf(tzH)===-1)hh=[tzH];}
+if(st.tzT>0){var tzH=st.party.find(function(p){return p.leon&&p.hp>0;});if(tzH)hh=[tzH];}
 if(e.stun>0){log('💫 '+e.n+' оглушён и пропускает ход','#7fb8d8');return;}
 /* ===== APOFIS D-7 ===== */
 if(e.d7){e.sh7=0;
